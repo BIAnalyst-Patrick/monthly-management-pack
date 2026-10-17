@@ -88,7 +88,6 @@ DISCOUNT_START = 4
 DISCOUNT_PER_MONTH = Decimal("0.008")
 
 MIX_CATEGORY = "Staples"          # lowest margin, and the one that grows
-MIX_RIVAL_CATEGORY = "Home Care"  # highest-volume category, deliberately flat
 MIX_START = 2
 MIX_PER_MONTH = Decimal("1.022")
 
@@ -257,11 +256,3 @@ def build_ledger(seed: int = SEED) -> dict:
     }
     payload["fingerprint"] = fingerprint_of(payload)
     return payload
-
-
-def write_ledger(path, seed: int = SEED) -> dict:
-    ledger = build_ledger(seed)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    payload = {k: v for k, v in ledger.items()}
-    path.write_text(json.dumps(payload, indent=1) + "\n", encoding="utf-8")
-    return ledger

@@ -21,8 +21,6 @@ from .model import BRANCHES, CATEGORIES, Ledger
 
 CENT = Decimal("0.01")
 
-COMPONENT_ORDER = ("volume", "mix", "price", "cost")
-
 OWNER_OF_COMPONENT = {
     "volume": "Branch Sales",
     "price": "Commercial / Pricing",
