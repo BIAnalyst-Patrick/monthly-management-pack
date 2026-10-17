@@ -10,7 +10,8 @@ import unittest
 from decimal import Decimal
 from pathlib import Path
 
-from pack import generator, key, render, tables, variance
+from pack import generator, key, render, tables
+from pack.analysis import analyse_month
 from pack.model import Ledger
 
 MONTH = "2026-06"
@@ -20,7 +21,7 @@ class ReportFixture(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.ledger = Ledger.from_dict(generator.build_ledger())
-        cls.analysis = variance.analyse_month(cls.ledger, MONTH)
+        cls.analysis = analyse_month(cls.ledger, MONTH)
         cls.key = key.build_answer_key(cls.ledger, MONTH)
 
     def money(self, value):
@@ -133,6 +134,29 @@ class PackMarkdownTest(ReportFixture):
 
     def test_pack_reports_the_reconciliation_identity(self):
         self.assertIn("reconcil", self.text.lower())
+
+
+class ExceptionProseTest(ReportFixture):
+    """Selection carries facts; rendering owns the sentence for each driver."""
+
+    MARKERS = {
+        "price": "below the budgeted price",
+        "volume": "Units below budget",
+        "cost": "Unit costs on",
+        "mix": "The blend moved",
+    }
+
+    def test_each_driver_renders_its_own_finding(self):
+        exceptions = self.analysis.exceptions
+        self.assertEqual({e.driver for e in exceptions}, set(self.MARKERS))
+        for exception in exceptions:
+            finding = render.exception_finding(exception)
+            self.assertIn(self.MARKERS[exception.driver], finding)
+            self.assertTrue(render.exception_action(exception))
+
+    def test_the_answer_key_publishes_those_sentences(self):
+        for row in self.key["exceptions"]:
+            self.assertIn(self.MARKERS[row["driver"]], row["finding"])
 
 
 class TablesTest(ReportFixture):

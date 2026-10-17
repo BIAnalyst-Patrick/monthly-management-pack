@@ -7,12 +7,13 @@ spreadsheet parses the column as a number rather than text.
 import csv
 from pathlib import Path
 
-from . import money, variance
+from . import lines, money, render, trends
+from .analysis import MonthAnalysis
 from .model import Ledger
 
 
 def write_tables(
-    ledger: Ledger, analysis: variance.MonthAnalysis, directory: Path
+    ledger: Ledger, analysis: MonthAnalysis, directory: Path
 ) -> list[Path]:
     directory.mkdir(parents=True, exist_ok=True)
     written = []
@@ -38,7 +39,7 @@ def write_tables(
                     row.driver,
                     money.plain(row.gross_profit_impact),
                     row.owner,
-                    row.action,
+                    render.exception_action(row),
                 ]
             )
     written.append(exceptions_path)
@@ -53,7 +54,7 @@ def write_tables(
                 "variance", "price", "cost_rate", "volume_revenue", "volume_cost",
             ]
         )
-        for row in variance.line_variances(ledger, analysis.month):
+        for row in lines.line_variances(ledger, analysis.month):
             writer.writerow(
                 [
                     row.branch, row.sku, row.product, row.category, row.owner,
@@ -72,7 +73,7 @@ def write_tables(
             ["branch", "window", "units_budget", "units_actual",
              "volume_effect", "variance_pct", "adverse_months", "off_track"]
         )
-        for row in variance.branch_trends(ledger, analysis.month):
+        for row in trends.branch_trends(ledger, analysis.month):
             writer.writerow(
                 [
                     row.branch, " ".join(row.window), row.units_budget,

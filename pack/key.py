@@ -7,12 +7,14 @@ so the schema lives on its own rather than inside the CLI module.
 import json
 from pathlib import Path
 
-from . import money, variance
+from . import bridge as bridge_mod
+from . import lines, money, render, trends
+from .analysis import analyse_month
 from .model import Ledger
 
 
 def build_answer_key(ledger: Ledger, month: str) -> dict:
-    analysis = variance.analyse_month(ledger, month)
+    analysis = analyse_month(ledger, month)
     bridge = analysis.bridge
 
     return {
@@ -45,7 +47,7 @@ def build_answer_key(ledger: Ledger, month: str) -> dict:
         },
         "owners": {
             owner: money.plain(value)
-            for owner, value in variance.owner_totals(bridge).items()
+            for owner, value in bridge_mod.owner_totals(bridge).items()
         },
         "by_branch": [
             {
@@ -74,8 +76,8 @@ def build_answer_key(ledger: Ledger, month: str) -> dict:
                 "driver": row.driver,
                 "gross_profit_impact": money.plain(row.gross_profit_impact),
                 "owner": row.owner,
-                "action": row.action,
-                "finding": row.finding,
+                "action": render.exception_action(row),
+                "finding": render.exception_finding(row),
             }
             for row in analysis.exceptions
         ],
@@ -96,7 +98,7 @@ def build_answer_key(ledger: Ledger, month: str) -> dict:
                 "volume_revenue": money.plain(row.volume_revenue),
                 "volume_cost": money.plain(row.volume_cost),
             }
-            for row in variance.line_variances(ledger, month)
+            for row in lines.line_variances(ledger, month)
         ],
         "branch_trends": [
             {
@@ -109,7 +111,7 @@ def build_answer_key(ledger: Ledger, month: str) -> dict:
                 "adverse_months": row.adverse_months,
                 "off_track": row.is_off_track,
             }
-            for row in variance.branch_trends(ledger, month)
+            for row in trends.branch_trends(ledger, month)
         ],
         "materiality": money.plain(analysis.materiality),
         "trend": [
@@ -119,7 +121,7 @@ def build_answer_key(ledger: Ledger, month: str) -> dict:
                 "actual_gross_profit": money.plain(row["actual_gross_profit"]),
                 "variance": money.plain(row["variance"]),
             }
-            for row in variance.trend(ledger)
+            for row in trends.trend(ledger)
         ],
     }
 

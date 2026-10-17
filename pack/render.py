@@ -1,15 +1,75 @@
-"""Markdown rendering for the monthly pack and the answer key.
+"""Every human-readable sentence: the markdown, and the exception prose.
 
 Rendering is a pure function of the analysis and the answer key: nothing here
-writes a file, so the same text can be tested without touching disk.
+writes a file, so the same text can be tested without touching disk. Exception
+selection decides *what* is material and carries the evidence; the sentences
+explaining it are built here, next to every other sentence the pack prints.
 """
 
 from decimal import Decimal
 
-from . import money, variance
+from . import money
+from .analysis import MonthAnalysis
+from .exceptions import ExceptionLine
 
 
-def monthly_pack(analysis: variance.MonthAnalysis, key: dict) -> str:
+def exception_action(exception: ExceptionLine) -> str:
+    """What the owner should do about this finding."""
+    evidence = exception.evidence
+    if exception.driver == "price":
+        return (
+            f"Reissue the {evidence['branch']} price file and cap discount "
+            "authority at 7%"
+        )
+    if exception.driver == "volume":
+        return f"Rebuild the {evidence['branch']} trading plan against the trend gap"
+    if exception.driver == "cost":
+        return f"Renegotiate {exception.label} supply terms or reprice the range"
+    if exception.driver == "mix":
+        return (
+            f"Review {evidence['mover']} ranging, promo depth and shelf allocation "
+            "against the budgeted blend"
+        )
+    raise KeyError(exception.driver)
+
+
+def exception_finding(exception: ExceptionLine) -> str:
+    """The evidence, stated as the sentence a reader acts on."""
+    evidence = exception.evidence
+    impact = exception.gross_profit_impact
+    if exception.driver == "price":
+        return (
+            f"Prices realised {money.cents(evidence['erosion_pct'])}% below the "
+            "budgeted price for the volume actually sold, costing "
+            f"{money.kes(-impact, absolute=True)} of gross profit on "
+            f"{money.kes(evidence['revenue_budget'], absolute=True)} of budgeted "
+            "branch revenue."
+        )
+    if exception.driver == "volume":
+        return (
+            f"Units below budget in {evidence['adverse_months']} of the last "
+            f"{evidence['window']}, {abs(evidence['variance_pct'])}% down on a "
+            "rolling basis: this is a branch drifting, not one bad month, and the "
+            "unit gap is worth "
+            f"{money.kes(impact, absolute=True)} of gross profit at budget margins."
+        )
+    if exception.driver == "cost":
+        return (
+            f"Unit costs on {exception.label} are running "
+            f"{money.cents(evidence['step_pct'])}% above budget on the volume "
+            f"bought, costing {money.kes(-impact, absolute=True)} of gross profit."
+        )
+    if exception.driver == "mix":
+        return (
+            f"The blend moved towards lower-margin lines: {evidence['mover']} went "
+            f"from {money.cents(evidence['budget_share_pct'])}% of budgeted units "
+            f"to {money.cents(evidence['actual_share_pct'])}% actual, costing "
+            f"{money.kes(-impact, absolute=True)} of gross profit at budget margins."
+        )
+    raise KeyError(exception.driver)
+
+
+def monthly_pack(analysis: MonthAnalysis, key: dict) -> str:
     headline = key["headline"]
     bridge = key["bridge"]
     revenue_gap = Decimal(headline["revenue_variance_pct"])

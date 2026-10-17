@@ -3,7 +3,8 @@
 import json
 from pathlib import Path
 
-from . import charts, generator, key, render, tables, validation, variance
+from . import charts, generator, key, render, tables, trends, validation
+from .analysis import analyse_month
 from .model import Ledger
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -19,7 +20,7 @@ def run(month: str = DEFAULT_MONTH, root: Path | None = None) -> dict:
     data_path.write_text(json.dumps(raw, indent=1) + "\n", encoding="utf-8")
 
     ledger = Ledger.from_dict(raw)
-    analysis = variance.analyse_month(ledger, month)
+    analysis = analyse_month(ledger, month)
     answer_key = key.build_answer_key(ledger, month)
     checks = validation.run_checks(ledger, analysis, answer_key)
 
@@ -41,7 +42,7 @@ def run(month: str = DEFAULT_MONTH, root: Path | None = None) -> dict:
 
     charts.bridge_waterfall(analysis, outputs / "charts" / "01_bridge_waterfall.png")
     charts.gross_profit_trend(
-        analysis, variance.trend(ledger), outputs / "charts" / "02_gross_profit_trend.png"
+        analysis, trends.trend(ledger), outputs / "charts" / "02_gross_profit_trend.png"
     )
     charts.variance_by_owner(analysis, outputs / "charts" / "03_variance_by_owner.png")
 

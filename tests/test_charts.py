@@ -17,7 +17,8 @@ try:
 except ImportError:  # pragma: no cover - charts are optional
     HAVE_PIL = False
 
-from pack import generator, variance
+from pack import generator
+from pack.analysis import analyse_month
 from pack.model import Ledger
 
 ACCENT = (11, 94, 132)
@@ -49,7 +50,7 @@ class WaterfallGeometryTest(unittest.TestCase):
         from pack import charts
 
         cls.ledger = Ledger.from_dict(generator.build_ledger())
-        cls.analysis = variance.analyse_month(cls.ledger, "2026-06")
+        cls.analysis = analyse_month(cls.ledger, "2026-06")
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "bridge.png"
             charts.bridge_waterfall(cls.analysis, path)

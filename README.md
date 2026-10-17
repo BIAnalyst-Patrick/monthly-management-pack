@@ -178,9 +178,13 @@ and the committed PNGs mean a reader never has to install it.
 pack/
   model.py       catalogue, ledger lines, parsing (Decimal money)
   generator.py   the seeded budget and the actuals that drift from it
-  variance.py    flexed budget, bridge, attribution, exceptions, line and trend rules
+  bridge.py      flexed budget, the four-component bridge, owner attribution
+  lines.py       the per-line decomposition and who owns each line
+  trends.py      the branch trend rule over a trailing window
+  exceptions.py  what is material enough to carry an owner, and the evidence
+  analysis.py    one month assembled from the rules above
   key.py         the answer key: one JSON schema for every published number
-  render.py      the two markdown renderers (monthly pack, answer key)
+  render.py      the markdown, and the exception prose
   tables.py      the six CSV tables
   cli.py         argument parsing and the scratch output root
   report.py      thin entry point for `python -m pack.report`

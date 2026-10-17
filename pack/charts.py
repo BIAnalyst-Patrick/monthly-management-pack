@@ -9,7 +9,9 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-from . import money, variance
+from . import bridge as bridge_mod
+from . import money
+from .analysis import MonthAnalysis
 
 WIDTH, HEIGHT = 1240, 700
 BG = (255, 255, 255)
@@ -47,7 +49,7 @@ def _save(img, path: Path) -> Path:
     return path
 
 
-def bridge_waterfall(analysis: variance.MonthAnalysis, path: Path) -> Path:
+def bridge_waterfall(analysis: MonthAnalysis, path: Path) -> Path:
     bridge = analysis.bridge
     steps = [
         ("Budget", float(bridge.budget_gp), None),
@@ -118,7 +120,7 @@ def bridge_waterfall(analysis: variance.MonthAnalysis, path: Path) -> Path:
     return _save(img, path)
 
 
-def gross_profit_trend(analysis: variance.MonthAnalysis, trend_rows, path: Path) -> Path:
+def gross_profit_trend(analysis: MonthAnalysis, trend_rows, path: Path) -> Path:
     img, draw = _canvas(
         "Gross profit against budget",
         "Eighteen months of actual gross profit against the phased budget",
@@ -173,8 +175,8 @@ def gross_profit_trend(analysis: variance.MonthAnalysis, trend_rows, path: Path)
     return _save(img, path)
 
 
-def variance_by_owner(analysis: variance.MonthAnalysis, path: Path) -> Path:
-    owners = variance.owner_totals(analysis.bridge)
+def variance_by_owner(analysis: MonthAnalysis, path: Path) -> Path:
+    owners = bridge_mod.owner_totals(analysis.bridge)
     img, draw = _canvas(
         "Who owns the variance",
         "Each driver attributed to the department that can act on it",

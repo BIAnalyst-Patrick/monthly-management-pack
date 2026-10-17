@@ -7,7 +7,8 @@ key and expects the drift guard to catch it.
 import copy
 import unittest
 
-from pack import generator, key, validation, variance
+from pack import generator, key, validation
+from pack.analysis import analyse_month
 from pack.model import Ledger
 
 MONTH = "2026-06"
@@ -17,7 +18,7 @@ class ValidationFixture(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.ledger = Ledger.from_dict(generator.build_ledger())
-        cls.analysis = variance.analyse_month(cls.ledger, MONTH)
+        cls.analysis = analyse_month(cls.ledger, MONTH)
         cls.key = key.build_answer_key(cls.ledger, MONTH)
 
 
@@ -68,7 +69,7 @@ class DriftGuardTest(ValidationFixture):
         broken = copy.deepcopy(generator.build_ledger())
         broken["actuals"][0]["price"] = "999999.00"
         ledger = Ledger.from_dict(broken)
-        analysis = variance.analyse_month(ledger, MONTH)
+        analysis = analyse_month(ledger, MONTH)
         answer_key = key.build_answer_key(ledger, MONTH)
         checks = validation.run_checks(ledger, analysis, answer_key)
         failed_names = {c.name for c in checks if not c.passed}

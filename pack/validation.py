@@ -8,7 +8,9 @@ branch split against the total, the answer key against a recomputation.
 from dataclasses import dataclass
 from decimal import Decimal
 
-from . import money, variance
+from . import bridge as bridge_mod
+from . import lines, money
+from .analysis import MonthAnalysis
 from .generator import fingerprint_of
 from .model import BRANCHES, CATEGORIES, MONTHS, Ledger, SKUS_PER_CATEGORY
 
@@ -48,7 +50,7 @@ def _micro_ledger() -> Ledger:
     )
 
 
-def run_checks(ledger: Ledger, analysis: variance.MonthAnalysis, key: dict) -> list[Check]:
+def run_checks(ledger: Ledger, analysis: MonthAnalysis, key: dict) -> list[Check]:
     checks: list[Check] = []
     bridge = analysis.bridge
     month_ledger = ledger.month(analysis.month)
@@ -175,7 +177,7 @@ def run_checks(ledger: Ledger, analysis: variance.MonthAnalysis, key: dict) -> l
         )
     )
 
-    micro = variance.bridge_for_month(_micro_ledger(), "2026-06")
+    micro = bridge_mod.bridge_for_month(_micro_ledger(), "2026-06")
     checks.append(
         Check(
             "mix is zero when every product scales together",
@@ -211,22 +213,24 @@ def run_checks(ledger: Ledger, analysis: variance.MonthAnalysis, key: dict) -> l
         )
     )
 
-    lines = variance.line_variances(ledger, analysis.month)
-    line_cost = money.cents(sum((l.cost_rate for l in lines), Decimal(0)))
+    month_lines = lines.line_variances(ledger, analysis.month)
+    line_cost = money.cents(sum((l.cost_rate for l in month_lines), Decimal(0)))
     checks.append(
         Check(
             "unit-cost drift sums to the bridge cost",
             line_cost == bridge.cost,
-            f"{money.grouped(line_cost)} across {len(lines)} lines, bridge {money.grouped(bridge.cost)}",
+            f"{money.grouped(line_cost)} across {len(month_lines)} lines, "
+            f"bridge {money.grouped(bridge.cost)}",
         )
     )
 
-    line_total = money.cents(sum((l.variance for l in lines), Decimal(0)))
+    line_total = money.cents(sum((l.variance for l in month_lines), Decimal(0)))
     checks.append(
         Check(
             "line variances sum to the bridge total",
             line_total == bridge.total_variance,
-            f"{money.grouped(line_total)} across {len(lines)} lines, bridge {money.grouped(bridge.total_variance)}",
+            f"{money.grouped(line_total)} across {len(month_lines)} lines, "
+            f"bridge {money.grouped(bridge.total_variance)}",
         )
     )
 
