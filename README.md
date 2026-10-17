@@ -1,0 +1,159 @@
+# Monthly management pack — budget vs actual, decomposed by driver
+
+> **A worked case study, and the data is synthetic — disclosed on this line.**
+> A three-branch wholesaler missed its gross-profit budget by **19.38%** while
+> revenue came in **0.74%** off plan. This repo splits that shortfall into
+> volume, price, mix and cost, attributes each to the department that owns it,
+> and proves the four components reconcile to the cent.
+
+Most variance reports subtract two numbers and call the difference "unfavourable".
+That answer cannot be acted on, because it does not say whether the business sold
+less, charged less, bought worse, or simply sold a different blend of products.
+This pack answers that.
+
+## The question
+
+> Sales are within 1% of budget and gross profit is nearly 19% behind it.
+> Where did the profit go, and who owns it?
+
+## The answer
+
+| | |
+|---|---|
+| **Headline** | Revenue **KES 1,463,426.72** budget against **KES 1,452,532.75** actual (-0.74%). Gross profit **KES 378,744.50** budget against **KES 305,338.59** actual — a shortfall of **KES 73,405.91** (-19.38%). |
+| **The four drivers** | Price **-41,943.76**, cost **-26,053.41**, mix **-14,164.16**, volume **+8,755.42**. Price is the largest single driver: the Nakuru branch discounted its way through the year. |
+| **Who owns it** | Commercial / Pricing **-41,943.76**, Procurement **-26,053.41**, Category Management **-14,164.16**, Branch Sales **+8,755.42**. |
+| **The twist** | Volume is *favourable*. The business sold slightly more units than it budgeted and still lost a fifth of its gross profit — so "we need more sales" is the wrong instruction this month. |
+| **Data** | **Synthetic**: 18 months × 3 branches × 40 SKUs, generated from a seeded, documented mechanism — ledger fingerprint `f8b8fa811c7ef11b`. |
+| **Checks** | **15/15** published in [`outputs/validation_report.md`](outputs/validation_report.md); the bridge reconciles to the cent. |
+
+## Why a flexed budget, not a subtraction
+
+A budget is built on planned volume. Comparing it with actual spend at actual
+volume mixes two effects and calls the result a variance. The fix is the **flexed
+budget**: actual volume valued at budget price and budget cost. It answers
+"what would we have made if we had hit the prices and costs we planned, on the
+units we actually sold?" — and it is the hinge the whole decomposition turns on.
+
+- budget → flex is **volume and mix** (how much was sold, and what blend)
+- flex → actual is **price and cost** (what was charged, and what was paid)
+
+## The bridge
+
+| Driver | KES | Share of budget gross profit |
+|---|---:|---:|
+| Budget gross profit | 378,744.50 | |
+| Volume — total units at the budget margin per unit | 8,755.42 | 2.31% |
+| Mix — selling a different blend at budget margins | -14,164.16 | -3.74% |
+| Price — actual units at the change in selling price | -41,943.76 | -11.07% |
+| Cost — actual units at the change in unit cost | -26,053.41 | -6.88% |
+| **Actual gross profit** | **305,338.59** | |
+
+`8,755.42 + (-14,164.16) + (-41,943.76) + (-26,053.41) = -73,405.91`, which is
+actual gross profit less budget gross profit, exactly. The flexed budget itself is
+**KES 373,335.76** — actual volume at budget rates.
+
+Mix is computed as the residual of the volume-and-mix movement after the total-volume
+effect is taken out, so the identity holds by construction rather than by rounding
+luck. The algebra is written out in [`docs/01_method.md`](docs/01_method.md).
+
+## The 4 exceptions, each with an owner
+
+Materiality is KES 10,000 of gross-profit impact for the month.
+
+| Line | Finding | Impact (KES) | Owner | Action |
+|---|---|---:|---|---|
+| Nakuru | Prices realised 9.87% below the budgeted price for the volume sold | -40,901.06 | Commercial / Pricing | Reissue the price file and cap discount authority at 7% |
+| Home Care | Unit costs 6.56% above budget on the volume bought | -25,934.14 | Procurement | Renegotiate supply terms or reprice the range |
+| Mombasa Road | Units 12.76% below budget at the budgeted margin per unit | -15,656.28 | Branch Sales | Rebuild the branch trading plan against the volume gap |
+| Product mix | Staples moved from 25.00% of budgeted units to 31.56% | -14,164.16 | Category Management | Review ranging and promo depth against the budgeted blend |
+
+The full pack — headline, bridge, exceptions, branch and category splits, and the
+three actions for Monday — is generated at [`outputs/MONTHLY_PACK.md`](outputs/MONTHLY_PACK.md).
+
+## Where it sits
+
+| Branch | Budget GP | Actual GP | Variance | % |
+|---|---:|---:|---:|---:|
+| Nakuru | 98,155.07 | 56,021.11 | -42,133.96 | -42.93% |
+| Mombasa Road | 122,698.84 | 95,653.57 | -27,045.27 | -22.04% |
+| Nairobi CBD | 157,890.59 | 153,663.91 | -4,226.68 | -2.68% |
+
+One branch discounting and one branch under-trading account for almost the whole
+shortfall; the largest branch is within 3% of plan. That is a management answer,
+not a chart.
+
+## What this project demonstrates
+
+1. **Management accounting, not just reporting** — a flexed budget, a driver-level
+   bridge, and the discipline to separate "we sold less" from "we discounted more".
+2. **Numbers an accountant would sign** — every component is exact decimal
+   arithmetic, and the bridge reconciles to the cent rather than approximately.
+3. **A pack that runs itself** — one command regenerates the ledger, the pack, the
+   tables, the charts and the validation report, byte-identically.
+4. **Every claim tested** — the generator's shape and determinism, the bridge
+   identities, the attribution, the exceptions, and the README's own figures are
+   all guarded by tests.
+
+## Run it
+
+```bash
+git clone https://github.com/BIAnalyst-Patrick/monthly-management-pack
+cd monthly-management-pack
+
+make test    # full suite, including the README drift guard
+make run     # regenerates the ledger, pack, tables, answer key and charts
+```
+
+One month, without rebuilding everything:
+
+```bash
+python -m pack.report --month 2025-12
+```
+
+No installation. The analysis is standard library only; the charts need Pillow,
+and the committed PNGs mean a reader never has to install it.
+
+## What is out of scope
+
+- **Gross profit, not net profit.** Overhead is not allocated, so a favourable
+  branch here is favourable before central costs.
+- **Single currency (KES), no tax, no foreign exchange, no write-offs.**
+- **A monthly control pack, not a forecast.** The budget is fixed; there is no
+  re-forecast, no driver-based rolling plan and no scenario modelling.
+- **The data is simulated.** It is generated from four documented mechanisms plus
+  seeded noise so that the diagnosis can be *graded* rather than merely asserted.
+  No client figures appear anywhere in this repository.
+
+| Planted mechanism | Starts | What it makes visible |
+|---|---|---|
+| Branch-wide discounting in Nakuru, 0.8% deeper each month | 2025-05 | adverse price variance |
+| Staples (15% margin) growing 2.2%/month while Home Care stays flat | 2025-03 | adverse mix |
+| Home Care supplier cost step of +6.5% | 2026-01 | adverse cost variance |
+| Mombasa Road volume decaying 1.8%/month | 2025-08 | adverse volume variance |
+
+## Repository layout
+
+```
+pack/
+  model.py       catalogue, ledger lines, parsing (Decimal money)
+  generator.py   the seeded budget and the actuals that drift from it
+  variance.py    flexed budget, bridge, attribution, exceptions
+  report.py      answer key, monthly pack, CSV tables, CLI
+  validation.py  the fifteen checks
+  charts.py      three committed PNGs
+  pipeline.py    one run from ledger to artefacts
+data/ledger.json          every budget and actual line, 18 months
+outputs/MONTHLY_PACK.md   the pack itself
+outputs/answer_key.json   every number quoted above
+outputs/validation_report.md
+tests/                    the suite, including the README drift guard
+```
+
+## Data
+
+Seed `20260101`, fingerprint `f8b8fa811c7ef11b`. Regenerate with `make run` and
+the fingerprint should be identical; if it is not, the ledger you are reading is
+not the ledger this README describes. The 15 checks in
+[`outputs/validation_report.md`](outputs/validation_report.md) include a
+fingerprint guard, so a hand-edited line is caught rather than accommodated.

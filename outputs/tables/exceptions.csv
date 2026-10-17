@@ -1,0 +1,5 @@
+scope,label,driver,impact,owner,action
+branch,Nakuru,price,-40901.06,Commercial / Pricing,Reissue the Nakuru price file and cap discount authority at 7%
+category,Home Care,cost,-25934.14,Procurement,Renegotiate Home Care supply terms or reprice the range
+branch,Mombasa Road,volume,-15656.28,Branch Sales,Rebuild the Mombasa Road trading plan against the volume gap
+portfolio,Product mix,mix,-14164.16,Category Management,"Review Staples ranging, promo depth and shelf allocation against the budgeted blend"
