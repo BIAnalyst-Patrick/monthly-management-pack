@@ -1,9 +1,10 @@
-"""Every human-readable sentence: the markdown, and the exception prose.
+"""The pack's markdown, and the sentences that explain each exception.
 
 Rendering is a pure function of the analysis and the answer key: nothing here
 writes a file, so the same text can be tested without touching disk. Exception
 selection decides *what* is material and carries the evidence; the sentences
-explaining it are built here, next to every other sentence the pack prints.
+explaining it are built here, with the pack it appears in, rather than inside
+the rule that chose it.
 """
 
 from decimal import Decimal
