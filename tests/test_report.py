@@ -10,7 +10,7 @@ import unittest
 from decimal import Decimal
 from pathlib import Path
 
-from pack import generator, report, variance
+from pack import generator, key, render, tables, variance
 from pack.model import Ledger
 
 MONTH = "2026-06"
@@ -21,7 +21,7 @@ class ReportFixture(unittest.TestCase):
     def setUpClass(cls):
         cls.ledger = Ledger.from_dict(generator.build_ledger())
         cls.analysis = variance.analyse_month(cls.ledger, MONTH)
-        cls.key = report.build_answer_key(cls.ledger, MONTH)
+        cls.key = key.build_answer_key(cls.ledger, MONTH)
 
     def money(self, value):
         return Decimal(value)
@@ -105,7 +105,7 @@ class AnswerKeyTest(ReportFixture):
 
 class PackMarkdownTest(ReportFixture):
     def setUp(self):
-        self.text = report.render_pack(self.analysis, self.key)
+        self.text = render.monthly_pack(self.analysis, self.key)
 
     def test_pack_opens_with_the_month_and_the_headline_variance(self):
         self.assertIn(MONTH, self.text.splitlines()[0])
@@ -138,7 +138,7 @@ class PackMarkdownTest(ReportFixture):
 class TablesTest(ReportFixture):
     def test_tables_are_written_as_csv_with_headers(self):
         with tempfile.TemporaryDirectory() as tmp:
-            paths = report.write_tables(self.ledger, self.analysis, Path(tmp))
+            paths = tables.write_tables(self.ledger, self.analysis, Path(tmp))
             self.assertEqual(len(paths), 6)
             names = {p.name for p in paths}
             self.assertIn("line_variance.csv", names)

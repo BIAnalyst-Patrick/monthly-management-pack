@@ -17,9 +17,8 @@ than by rounding luck.
 from dataclasses import dataclass
 from decimal import Decimal
 
+from . import money
 from .model import BRANCHES, CATEGORIES, Ledger
-
-CENT = Decimal("0.01")
 
 OWNER_OF_COMPONENT = {
     "volume": "Branch Sales",
@@ -36,10 +35,6 @@ COST_STEP_THRESHOLD = Decimal("1.025")
 TREND_WINDOW = 3
 TREND_ADVERSE_MONTHS = 2
 TREND_VARIANCE_THRESHOLD = Decimal("0.05")
-
-
-def _money(value) -> Decimal:
-    return Decimal(value).quantize(CENT)
 
 
 @dataclass(frozen=True)
@@ -81,7 +76,7 @@ class GroupVariance:
     def variance_pct(self) -> Decimal:
         if self.budget_gross_profit == 0:
             return Decimal("0")
-        return (self.variance / self.budget_gross_profit * 100).quantize(CENT)
+        return money.cents(self.variance / self.budget_gross_profit * 100)
 
 
 @dataclass(frozen=True)
@@ -139,7 +134,7 @@ class BranchTrend:
         """The unit gap over the window, valued at the budget margin per unit."""
         if not self.units_budget:
             return Decimal("0.00")
-        return _money(
+        return money.cents(
             Decimal(self.units_actual - self.units_budget)
             * (self.budget_gp / Decimal(self.units_budget))
         )
@@ -148,7 +143,7 @@ class BranchTrend:
     def variance_pct(self) -> Decimal:
         if self.budget_gp == 0:
             return Decimal("0")
-        return (self.volume_effect / self.budget_gp * 100).quantize(CENT)
+        return money.cents(self.volume_effect / self.budget_gp * 100)
 
     @property
     def is_off_track(self) -> bool:
@@ -192,7 +187,7 @@ class MonthAnalysis:
     def variance_pct(self) -> Decimal:
         if self.budget_gross_profit == 0:
             return Decimal("0")
-        return (self.gross_profit_variance / self.budget_gross_profit * 100).quantize(CENT)
+        return money.cents(self.gross_profit_variance / self.budget_gross_profit * 100)
 
     @property
     def largest_driver(self) -> str:
@@ -212,7 +207,7 @@ def _paired(ledger: Ledger, month: str):
 def flexed_gross_profit(ledger: Ledger, month: str) -> Decimal:
     """Gross profit at actual volume and budget price and cost."""
     budget, actual, keys = _paired(ledger, month)
-    return _money(
+    return money.cents(
         sum((actual[key].volume * budget[key].unit_margin for key in keys), Decimal(0))
     )
 
@@ -247,13 +242,13 @@ def bridge_for_month(ledger: Ledger, month: str) -> Bridge:
 
     return Bridge(
         month=month,
-        budget_gp=_money(budget_gp),
-        flexed_gp=_money(flexed),
-        actual_gp=_money(actual_gp),
-        volume=_money(volume),
-        mix=_money(volume_and_mix - volume),
-        price=_money(price),
-        cost=_money(cost),
+        budget_gp=money.cents(budget_gp),
+        flexed_gp=money.cents(flexed),
+        actual_gp=money.cents(actual_gp),
+        volume=money.cents(volume),
+        mix=money.cents(volume_and_mix - volume),
+        price=money.cents(price),
+        cost=money.cents(cost),
     )
 
 
@@ -262,7 +257,7 @@ def owner_totals(bridge: Bridge) -> dict[str, Decimal]:
     totals = {owner: Decimal("0") for owner in OWNER_OF_COMPONENT.values()}
     for component, value in bridge.components.items():
         totals[OWNER_OF_COMPONENT[component]] += value
-    return {owner: _money(value) for owner, value in totals.items()}
+    return {owner: money.cents(value) for owner, value in totals.items()}
 
 
 def _group(ledger: Ledger, month: str, key):
@@ -282,7 +277,7 @@ def _group(ledger: Ledger, month: str, key):
              if key(br, sku, ledger) == label),
             Decimal(0),
         )
-        rows.append(GroupVariance(label, _money(b), _money(a)))
+        rows.append(GroupVariance(label, money.cents(b), money.cents(a)))
     return tuple(rows)
 
 
@@ -312,10 +307,10 @@ def line_variances(ledger: Ledger, month: str) -> tuple[LineVariance, ...]:
     for key in keys:
         b, a = budget[key], actual[key]
         volume_change = Decimal(a.volume - b.volume)
-        price = _money(a.volume * (a.price - b.price))
-        cost_rate = _money(a.volume * (b.unit_cost - a.unit_cost))
-        volume_revenue = _money(volume_change * b.price)
-        volume_cost = _money(-volume_change * b.unit_cost)
+        price = money.cents(a.volume * (a.price - b.price))
+        cost_rate = money.cents(a.volume * (b.unit_cost - a.unit_cost))
+        volume_revenue = money.cents(volume_change * b.price)
+        volume_cost = money.cents(-volume_change * b.unit_cost)
         item = ledger.catalogue[a.sku]
         rows.append(
             LineVariance(
@@ -326,8 +321,8 @@ def line_variances(ledger: Ledger, month: str) -> tuple[LineVariance, ...]:
                 owner=_owning_department(price, cost_rate, volume_revenue + volume_cost),
                 units_budget=b.volume,
                 units_actual=a.volume,
-                gp_budget=_money(b.gross_profit),
-                gp_actual=_money(a.gross_profit),
+                gp_budget=money.cents(b.gross_profit),
+                gp_actual=money.cents(a.gross_profit),
                 price=price,
                 cost_rate=cost_rate,
                 volume_revenue=volume_revenue,
@@ -372,8 +367,8 @@ def branch_trends(
                 window=months,
                 units_budget=units_budget,
                 units_actual=units_actual,
-                budget_gp=_money(budget_gp),
-                actual_gp=_money(actual_gp),
+                budget_gp=money.cents(budget_gp),
+                actual_gp=money.cents(actual_gp),
                 adverse_months=adverse,
             )
         )
@@ -406,14 +401,14 @@ def _exceptions(ledger: Ledger, month: str, materiality: Decimal):
                     scope="branch",
                     label=branch,
                     driver="price",
-                    gross_profit_impact=_money(impact),
+                    gross_profit_impact=money.cents(impact),
                     owner=OWNER_OF_COMPONENT["price"],
                     action=f"Reissue the {branch} price file and cap discount authority at 7%",
                     finding=(
-                        f"Prices realised {erosion.quantize(CENT)}% below the budgeted "
+                        f"Prices realised {money.cents(erosion)}% below the budgeted "
                         f"price for the volume actually sold, costing "
-                        f"{_format_money(-impact)} of gross profit on "
-                        f"{_format_money(revenue_budget)} of budgeted branch revenue."
+                        f"{money.kes(-impact, absolute=True)} of gross profit on "
+                        f"{money.kes(revenue_budget, absolute=True)} of budgeted branch revenue."
                     ),
                 )
             )
@@ -427,14 +422,14 @@ def _exceptions(ledger: Ledger, month: str, materiality: Decimal):
                 scope="branch",
                 label=f"{trend.branch} ({span})",
                 driver="volume",
-                gross_profit_impact=_money(trend.volume_effect),
+                gross_profit_impact=money.cents(trend.volume_effect),
                 owner=OWNER_OF_COMPONENT["volume"],
                 action=f"Rebuild the {trend.branch} trading plan against the trend gap",
                 finding=(
                     f"Units below budget in {trend.adverse_months} of the last "
                     f"{span}, {abs(trend.variance_pct)}% down on a rolling basis: this "
                     f"is a branch drifting, not one bad month, and the unit gap is "
-                    f"worth {_format_money(trend.volume_effect)} of gross profit at "
+                    f"worth {money.kes(trend.volume_effect, absolute=True)} of gross profit at "
                     f"budget margins."
                 ),
             )
@@ -456,13 +451,13 @@ def _exceptions(ledger: Ledger, month: str, materiality: Decimal):
                     scope="category",
                     label=category,
                     driver="cost",
-                    gross_profit_impact=_money(impact),
+                    gross_profit_impact=money.cents(impact),
                     owner=OWNER_OF_COMPONENT["cost"],
                     action=f"Renegotiate {category} supply terms or reprice the range",
                     finding=(
-                        f"Unit costs on {category} are running {step.quantize(CENT)}% "
+                        f"Unit costs on {category} are running {money.cents(step)}% "
                         f"above budget on the volume bought, costing "
-                        f"{_format_money(-impact)} of gross profit."
+                        f"{money.kes(-impact, absolute=True)} of gross profit."
                     ),
                 )
             )
@@ -493,7 +488,7 @@ def _exceptions(ledger: Ledger, month: str, materiality: Decimal):
                 scope="portfolio",
                 label="Product mix",
                 driver="mix",
-                gross_profit_impact=_money(mix_impact),
+                gross_profit_impact=money.cents(mix_impact),
                 owner=OWNER_OF_COMPONENT["mix"],
                 action=(
                     f"Review {mover} ranging, promo depth and shelf allocation "
@@ -501,9 +496,9 @@ def _exceptions(ledger: Ledger, month: str, materiality: Decimal):
                 ),
                 finding=(
                     f"The blend moved towards lower-margin lines: {mover} went from "
-                    f"{(moved_budget * 100).quantize(CENT)}% of budgeted units to "
-                    f"{(moved_actual * 100).quantize(CENT)}% actual, costing "
-                    f"{_format_money(-mix_impact)} of gross profit at budget margins."
+                    f"{money.cents(moved_budget * 100)}% of budgeted units to "
+                    f"{money.cents(moved_actual * 100)}% actual, costing "
+                    f"{money.kes(-mix_impact, absolute=True)} of gross profit at budget margins."
                 ),
             )
         )
@@ -511,10 +506,6 @@ def _exceptions(ledger: Ledger, month: str, materiality: Decimal):
     filtered = [e for e in found if abs(e.gross_profit_impact) >= materiality]
     filtered.sort(key=lambda e: (-abs(e.gross_profit_impact), e.label, e.driver))
     return tuple(filtered)
-
-
-def _format_money(value: Decimal) -> str:
-    return f"KES {abs(value):,.2f}"
 
 
 def analyse_month(
@@ -528,10 +519,10 @@ def analyse_month(
 
     return MonthAnalysis(
         month=month,
-        budget_revenue=_money(budget_revenue),
-        actual_revenue=_money(actual_revenue),
-        budget_gross_profit=_money(budget_gp),
-        actual_gross_profit=_money(actual_gp),
+        budget_revenue=money.cents(budget_revenue),
+        actual_revenue=money.cents(actual_revenue),
+        budget_gross_profit=money.cents(budget_gp),
+        actual_gross_profit=money.cents(actual_gp),
         bridge=bridge_for_month(ledger, month),
         by_branch=by_branch(ledger, month),
         by_category=by_category(ledger, month),
@@ -550,9 +541,9 @@ def trend(ledger: Ledger, months: tuple[str, ...] | None = None) -> tuple[dict, 
         rows.append(
             {
                 "month": month,
-                "budget_gross_profit": _money(budget_gp),
-                "actual_gross_profit": _money(actual_gp),
-                "variance": _money(actual_gp - budget_gp),
+                "budget_gross_profit": money.cents(budget_gp),
+                "actual_gross_profit": money.cents(actual_gp),
+                "variance": money.cents(actual_gp - budget_gp),
             }
         )
     return tuple(rows)

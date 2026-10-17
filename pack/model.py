@@ -8,6 +8,8 @@ from dataclasses import dataclass
 from decimal import Decimal
 from typing import Mapping
 
+from . import money
+
 BRANCHES = ("Nairobi CBD", "Nakuru", "Mombasa Road")
 CATEGORIES = ("Home Care", "Beverages", "Staples", "Snacks")
 SKUS_PER_CATEGORY = 10
@@ -23,7 +25,7 @@ MONTHS = tuple(
 
 def to_money(value) -> Decimal:
     """Quantise to cents, half-up, the way an invoice would."""
-    return Decimal(str(value)).quantize(Decimal("0.01"))
+    return money.cents(value)
 
 
 @dataclass(frozen=True)

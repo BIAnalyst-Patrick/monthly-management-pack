@@ -7,7 +7,7 @@ key and expects the drift guard to catch it.
 import copy
 import unittest
 
-from pack import generator, report, validation, variance
+from pack import generator, key, validation, variance
 from pack.model import Ledger
 
 MONTH = "2026-06"
@@ -18,7 +18,7 @@ class ValidationFixture(unittest.TestCase):
     def setUpClass(cls):
         cls.ledger = Ledger.from_dict(generator.build_ledger())
         cls.analysis = variance.analyse_month(cls.ledger, MONTH)
-        cls.key = report.build_answer_key(cls.ledger, MONTH)
+        cls.key = key.build_answer_key(cls.ledger, MONTH)
 
 
 class CheckSuiteTest(ValidationFixture):
@@ -69,8 +69,8 @@ class DriftGuardTest(ValidationFixture):
         broken["actuals"][0]["price"] = "999999.00"
         ledger = Ledger.from_dict(broken)
         analysis = variance.analyse_month(ledger, MONTH)
-        key = report.build_answer_key(ledger, MONTH)
-        checks = validation.run_checks(ledger, analysis, key)
+        answer_key = key.build_answer_key(ledger, MONTH)
+        checks = validation.run_checks(ledger, analysis, answer_key)
         failed_names = {c.name for c in checks if not c.passed}
         self.assertIn("fingerprint matches the canonical ledger", failed_names)
 

@@ -9,7 +9,7 @@ import unittest
 from decimal import Decimal
 from pathlib import Path
 
-from pack import generator, report
+from pack import generator, key
 from pack.model import Ledger
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -20,7 +20,7 @@ class ReadmeDriftTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.ledger = Ledger.from_dict(generator.build_ledger())
-        cls.key = report.build_answer_key(cls.ledger, MONTH)
+        cls.key = key.build_answer_key(cls.ledger, MONTH)
         cls.readme = (ROOT / "README.md").read_text(encoding="utf-8")
 
     def money(self, value) -> str:

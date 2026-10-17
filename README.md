@@ -139,11 +139,17 @@ make test    # full suite, including the README drift guard
 make run     # regenerates the ledger, pack, tables, answer key and charts
 ```
 
-One month, without rebuilding everything:
+One month, without touching the published pack:
 
 ```bash
-python -m pack.report --month 2025-12
+python -m pack.report --month 2025-12   # writes scratch/2025-12/
 ```
+
+A single month is a scratch run. It writes under `scratch/<month>/`, which git
+ignores, so following this README cannot overwrite the committed artefacts in
+`outputs/`. That is deliberate: `outputs/` is the release, and `make run` is the
+only thing that regenerates it. Pass `--out DIR` to choose another scratch
+directory.
 
 No installation. The analysis is standard library only; the charts need Pillow,
 and the committed PNGs mean a reader never has to install it.
@@ -172,12 +178,18 @@ and the committed PNGs mean a reader never has to install it.
 pack/
   model.py       catalogue, ledger lines, parsing (Decimal money)
   generator.py   the seeded budget and the actuals that drift from it
-  variance.py    flexed budget, bridge, attribution, exceptions
-  report.py      answer key, monthly pack, CSV tables, CLI
+  variance.py    flexed budget, bridge, attribution, exceptions, line and trend rules
+  key.py         the answer key: one JSON schema for every published number
+  render.py      the two markdown renderers (monthly pack, answer key)
+  tables.py      the six CSV tables
+  cli.py         argument parsing and the scratch output root
+  report.py      thin entry point for `python -m pack.report`
   validation.py  the seventeen checks
   charts.py      three committed PNGs
+  money.py       one formatter per output shape (cents, plain, grouped, kes, pct)
   pipeline.py    one run from ledger to artefacts
 data/ledger.json          every budget and actual line, 18 months
+scratch/                  ignored: output of single-month CLI runs
 outputs/MONTHLY_PACK.md   the pack itself
 outputs/answer_key.json   every number quoted above, including all 120 lines
 outputs/tables/           bridge, exceptions, branch, category, line and trend CSVs

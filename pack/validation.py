@@ -8,22 +8,15 @@ branch split against the total, the answer key against a recomputation.
 from dataclasses import dataclass
 from decimal import Decimal
 
-from . import variance
+from . import money, variance
 from .generator import fingerprint_of
 from .model import BRANCHES, CATEGORIES, MONTHS, Ledger, SKUS_PER_CATEGORY
-
-CENT = Decimal("0.01")
-
 
 @dataclass(frozen=True)
 class Check:
     name: str
     passed: bool
     detail: str
-
-
-def _money(value) -> str:
-    return f"{Decimal(value):,.2f}"
 
 
 def _micro_ledger() -> Ledger:
@@ -144,21 +137,23 @@ def run_checks(ledger: Ledger, analysis: variance.MonthAnalysis, key: dict) -> l
         Check(
             "bridge components sum to the total variance",
             components == bridge.total_variance,
-            f"{_money(components)} against {_money(bridge.total_variance)}",
+            f"{money.grouped(components)} against {money.grouped(bridge.total_variance)}",
         )
     )
 
     budget = {(l.branch, l.sku): l for l in month_ledger.budgets}
     actual = {(l.branch, l.sku): l for l in month_ledger.actuals}
-    flex = sum(
-        (actual[k].volume * (budget[k].price - budget[k].unit_cost) for k in budget),
-        Decimal(0),
-    ).quantize(CENT)
+    flex = money.cents(
+        sum(
+            (actual[k].volume * (budget[k].price - budget[k].unit_cost) for k in budget),
+            Decimal(0),
+        )
+    )
     checks.append(
         Check(
             "flexed budget equals actual volume at budget rates",
             flex == bridge.flexed_gp,
-            f"{_money(flex)} recomputed, {_money(bridge.flexed_gp)} published",
+            f"{money.grouped(flex)} recomputed, {money.grouped(bridge.flexed_gp)} published",
         )
     )
 
@@ -166,8 +161,8 @@ def run_checks(ledger: Ledger, analysis: variance.MonthAnalysis, key: dict) -> l
         Check(
             "flexed less budget equals volume plus mix",
             bridge.flexed_gp - bridge.budget_gp == bridge.volume + bridge.mix,
-            f"{_money(bridge.flexed_gp - bridge.budget_gp)} against "
-            f"{_money(bridge.volume + bridge.mix)}",
+            f"{money.grouped(bridge.flexed_gp - bridge.budget_gp)} against "
+            f"{money.grouped(bridge.volume + bridge.mix)}",
         )
     )
 
@@ -175,8 +170,8 @@ def run_checks(ledger: Ledger, analysis: variance.MonthAnalysis, key: dict) -> l
         Check(
             "actual less flexed equals price plus cost",
             bridge.actual_gp - bridge.flexed_gp == bridge.price + bridge.cost,
-            f"{_money(bridge.actual_gp - bridge.flexed_gp)} against "
-            f"{_money(bridge.price + bridge.cost)}",
+            f"{money.grouped(bridge.actual_gp - bridge.flexed_gp)} against "
+            f"{money.grouped(bridge.price + bridge.cost)}",
         )
     )
 
@@ -185,25 +180,25 @@ def run_checks(ledger: Ledger, analysis: variance.MonthAnalysis, key: dict) -> l
         Check(
             "mix is zero when every product scales together",
             micro.mix == Decimal("0.00") and micro.volume == Decimal("4000.00"),
-            f"mix {_money(micro.mix)}, volume {_money(micro.volume)} on a doubling of every product",
+            f"mix {money.grouped(micro.mix)}, volume {money.grouped(micro.volume)} on a doubling of every product",
         )
     )
 
-    branch_total = sum((row.actual_gross_profit for row in analysis.by_branch), Decimal(0)).quantize(CENT)
+    branch_total = money.cents(sum((row.actual_gross_profit for row in analysis.by_branch), Decimal(0)))
     checks.append(
         Check(
             "branch variances sum to actual gross profit",
             branch_total == analysis.actual_gross_profit,
-            f"{_money(branch_total)} against {_money(analysis.actual_gross_profit)}",
+            f"{money.grouped(branch_total)} against {money.grouped(analysis.actual_gross_profit)}",
         )
     )
 
-    category_total = sum((row.actual_gross_profit for row in analysis.by_category), Decimal(0)).quantize(CENT)
+    category_total = money.cents(sum((row.actual_gross_profit for row in analysis.by_category), Decimal(0)))
     checks.append(
         Check(
             "category variances sum to actual gross profit",
             category_total == analysis.actual_gross_profit,
-            f"{_money(category_total)} against {_money(analysis.actual_gross_profit)}",
+            f"{money.grouped(category_total)} against {money.grouped(analysis.actual_gross_profit)}",
         )
     )
 
@@ -212,33 +207,36 @@ def run_checks(ledger: Ledger, analysis: variance.MonthAnalysis, key: dict) -> l
         Check(
             "exception list is sorted by impact",
             impacts == sorted(impacts, reverse=True),
-            f"{len(impacts)} exceptions, largest {_money(impacts[0]) if impacts else '0.00'}",
+            f"{len(impacts)} exceptions, largest {money.grouped(impacts[0]) if impacts else '0.00'}",
         )
     )
 
     lines = variance.line_variances(ledger, analysis.month)
-    line_cost = sum((l.cost_rate for l in lines), Decimal(0)).quantize(CENT)
+    line_cost = money.cents(sum((l.cost_rate for l in lines), Decimal(0)))
     checks.append(
         Check(
             "unit-cost drift sums to the bridge cost",
             line_cost == bridge.cost,
-            f"{_money(line_cost)} across {len(lines)} lines, bridge {_money(bridge.cost)}",
+            f"{money.grouped(line_cost)} across {len(lines)} lines, bridge {money.grouped(bridge.cost)}",
         )
     )
 
-    line_total = sum((l.variance for l in lines), Decimal(0)).quantize(CENT)
+    line_total = money.cents(sum((l.variance for l in lines), Decimal(0)))
     checks.append(
         Check(
             "line variances sum to the bridge total",
             line_total == bridge.total_variance,
-            f"{_money(line_total)} across {len(lines)} lines, bridge {_money(bridge.total_variance)}",
+            f"{money.grouped(line_total)} across {len(lines)} lines, bridge {money.grouped(bridge.total_variance)}",
         )
     )
 
     key_bridge = key["bridge"]
-    key_total = sum(
-        (Decimal(key_bridge[k]) for k in ("volume", "mix", "price", "cost")), Decimal(0)
-    ).quantize(CENT)
+    key_total = money.cents(
+        sum(
+            (Decimal(key_bridge[k]) for k in ("volume", "mix", "price", "cost")),
+            Decimal(0),
+        )
+    )
     key_ok = (
         key_total == Decimal(key_bridge["total"]) == bridge.total_variance
         and Decimal(key["headline"]["gross_profit_variance"]) == bridge.total_variance
@@ -247,7 +245,7 @@ def run_checks(ledger: Ledger, analysis: variance.MonthAnalysis, key: dict) -> l
         Check(
             "answer key matches recomputed bridge",
             key_ok,
-            f"key total {_money(key_total)}, recomputed {_money(bridge.total_variance)}",
+            f"key total {money.grouped(key_total)}, recomputed {money.grouped(bridge.total_variance)}",
         )
     )
 

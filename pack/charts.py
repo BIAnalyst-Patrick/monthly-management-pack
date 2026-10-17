@@ -9,7 +9,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-from . import variance
+from . import money, variance
 
 WIDTH, HEIGHT = 1240, 700
 BG = (255, 255, 255)
@@ -39,16 +39,6 @@ def _canvas(title: str, subtitle: str):
     draw.text((70, 46), title, font=_font(30), fill=INK)
     draw.text((70, 88), subtitle, font=_font(16), fill=MUTED)
     return img, draw
-
-
-def _money(value: float) -> str:
-    sign = "-" if value < 0 else ""
-    value = abs(value)
-    if value >= 1_000_000:
-        return f"{sign}{value / 1_000_000:,.2f}M"
-    if value >= 1_000:
-        return f"{sign}{value / 1_000:,.0f}K"
-    return f"{sign}{value:,.0f}"
 
 
 def _save(img, path: Path) -> Path:
@@ -93,7 +83,7 @@ def bridge_waterfall(analysis: variance.MonthAnalysis, path: Path) -> Path:
             top_y = y_of(max(value, 0.0))
             bottom_y = y_of(min(value, 0.0))
             colour = ACCENT
-            draw.text((cx - 20, top_y - 26), _money(value), font=_font(15), fill=INK)
+            draw.text((cx - 20, top_y - 26), money.compact(value), font=_font(15), fill=INK)
         else:
             start = running
             running += value
@@ -102,7 +92,7 @@ def bridge_waterfall(analysis: variance.MonthAnalysis, path: Path) -> Path:
             colour = GOOD if value >= 0 else WARN
             draw.text(
                 (cx - 20, top_y - 26),
-                f"{'+' if value >= 0 else ''}{_money(value)}",
+                f"{'+' if value >= 0 else ''}{money.compact(value)}",
                 font=_font(15),
                 fill=colour,
             )
@@ -144,7 +134,7 @@ def gross_profit_trend(analysis: variance.MonthAnalysis, trend_rows, path: Path)
         value = low + span * step / 4
         y = bottom - (value - low) / span * (bottom - top)
         draw.line([(left, y), (right, y)], fill=GRID, width=1)
-        draw.text((60, y - 8), _money(value), font=_font(13), fill=MUTED)
+        draw.text((60, y - 8), money.compact(value), font=_font(13), fill=MUTED)
 
     step_x = (right - left) / max(len(trend_rows) - 1, 1)
 
@@ -206,12 +196,12 @@ def variance_by_owner(analysis: variance.MonthAnalysis, path: Path) -> Path:
         else:
             draw.rectangle([zero_x - width, cy, zero_x, cy + 34], fill=colour)
         draw.text((name_x, cy + 6), name, font=_font(16), fill=INK)
-        draw.text((value_x, cy + 6), _money(value), font=_font(15), fill=colour)
+        draw.text((value_x, cy + 6), money.compact(value), font=_font(15), fill=colour)
 
     draw.line([(zero_x, top), (zero_x, bottom)], fill=MUTED, width=1)
     draw.text(
         (name_x, HEIGHT - 52),
-        f"Total variance {_money(float(analysis.gross_profit_variance))} — the four bars sum to it.",
+        f"Total variance {money.compact(analysis.gross_profit_variance)} — the four bars sum to it.",
         font=_font(13),
         fill=MUTED,
     )
