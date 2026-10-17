@@ -84,7 +84,9 @@ def bridge_waterfall(analysis: variance.MonthAnalysis, path: Path) -> Path:
 
     slot = (right - left) / len(steps)
     bar_width = slot * 0.52
-    running = 0.0
+    # The first delta bar starts at budget gross profit, not at zero: that is
+    # what makes the picture a bridge rather than five unrelated columns.
+    running = float(bridge.budget_gp)
     for index, (label, value, delta) in enumerate(steps):
         cx = left + slot * index + slot / 2
         if delta is None:
@@ -162,10 +164,16 @@ def gross_profit_trend(analysis: variance.MonthAnalysis, trend_rows, path: Path)
         if row["month"] == analysis.month:
             x = left + step_x * i
             draw.line([(x, top), (x, bottom)], fill=WARN, width=1)
-            draw.text((x - 42, top - 22), analysis.month, font=_font(13), fill=WARN)
+            draw.text((x - 46, top - 22), analysis.month, font=_font(13), fill=WARN)
 
-    draw.text((right - 210, 150), "— actual", font=_font(15), fill=ACCENT)
-    draw.text((right - 110, 150), "— budget", font=_font(15), fill=ACCENT_SOFT)
+    for i, row in enumerate(trend_rows):
+        if i % 3 == 0 or i == len(trend_rows) - 1:
+            x = left + step_x * i
+            draw.text((x - 26, bottom + 12), row["month"], font=_font(11), fill=MUTED)
+
+    # Legend on the left, clear of the month marker at the right edge.
+    draw.text((left, 148), "— actual", font=_font(15), fill=ACCENT)
+    draw.text((left + 96, 148), "— budget", font=_font(15), fill=ACCENT_SOFT)
     draw.text(
         (left, HEIGHT - 54),
         "Same seeded ledger; budget re-phased each January.",
