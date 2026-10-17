@@ -93,6 +93,38 @@ def build_answer_key(ledger: Ledger, month: str) -> dict:
             }
             for row in analysis.exceptions
         ],
+        "lines": [
+            {
+                "branch": row.branch,
+                "sku": row.sku,
+                "product": row.product,
+                "category": row.category,
+                "owner": row.owner,
+                "units_budget": row.units_budget,
+                "units_actual": row.units_actual,
+                "gp_budget": _money(row.gp_budget),
+                "gp_actual": _money(row.gp_actual),
+                "variance": _money(row.variance),
+                "price": _money(row.price),
+                "cost_rate": _money(row.cost_rate),
+                "volume_revenue": _money(row.volume_revenue),
+                "volume_cost": _money(row.volume_cost),
+            }
+            for row in variance.line_variances(ledger, month)
+        ],
+        "branch_trends": [
+            {
+                "branch": row.branch,
+                "window": list(row.window),
+                "units_budget": row.units_budget,
+                "units_actual": row.units_actual,
+                "volume_effect": _money(row.volume_effect),
+                "variance_pct": _pct(row.variance_pct),
+                "adverse_months": row.adverse_months,
+                "off_track": row.is_off_track,
+            }
+            for row in variance.branch_trends(ledger, month)
+        ],
         "materiality": _money(analysis.materiality),
         "trend": [
             {
@@ -223,6 +255,22 @@ def render_pack(analysis: variance.MonthAnalysis, key: dict) -> str:
         )
     lines.append("")
 
+    lines += [
+        "### By line — the five worst",
+        "",
+        "| Branch | Product | Variance | Price | Unit cost | Volume | Owner |",
+        "|---|---|---:|---:|---:|---:|---|",
+    ]
+    for row in key["lines"][:5]:
+        volume = Decimal(row["volume_revenue"]) + Decimal(row["volume_cost"])
+        lines.append(
+            f"| {row['branch']} | {row['product']} | "
+            f"{_thousands(row['variance'])} | {_thousands(row['price'])} | "
+            f"{_thousands(row['cost_rate'])} | {_thousands(volume)} | "
+            f"{row['owner']} |"
+        )
+    lines.append("")
+
     lines += ["## What I would do first", ""]
     for index, row in enumerate(key["exceptions"][:3], start=1):
         lines.append(
@@ -294,7 +342,9 @@ def render_answer_key_md(key: dict) -> str:
     return "\n".join(lines)
 
 
-def write_tables(analysis: variance.MonthAnalysis, directory: Path) -> list[Path]:
+def write_tables(
+    ledger: Ledger, analysis: variance.MonthAnalysis, directory: Path
+) -> list[Path]:
     directory.mkdir(parents=True, exist_ok=True)
     written = []
 
@@ -323,6 +373,45 @@ def write_tables(analysis: variance.MonthAnalysis, directory: Path) -> list[Path
                 ]
             )
     written.append(exceptions_path)
+
+    lines_path = directory / "line_variance.csv"
+    with lines_path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(
+            [
+                "branch", "sku", "product", "category", "owner",
+                "units_budget", "units_actual", "gp_budget", "gp_actual",
+                "variance", "price", "cost_rate", "volume_revenue", "volume_cost",
+            ]
+        )
+        for row in variance.line_variances(ledger, analysis.month):
+            writer.writerow(
+                [
+                    row.branch, row.sku, row.product, row.category, row.owner,
+                    row.units_budget, row.units_actual, _money(row.gp_budget),
+                    _money(row.gp_actual), _money(row.variance), _money(row.price),
+                    _money(row.cost_rate), _money(row.volume_revenue),
+                    _money(row.volume_cost),
+                ]
+            )
+    written.append(lines_path)
+
+    trend_path = directory / "branch_trend.csv"
+    with trend_path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(
+            ["branch", "window", "units_budget", "units_actual",
+             "volume_effect", "variance_pct", "adverse_months", "off_track"]
+        )
+        for row in variance.branch_trends(ledger, analysis.month):
+            writer.writerow(
+                [
+                    row.branch, " ".join(row.window), row.units_budget,
+                    row.units_actual, _money(row.volume_effect),
+                    _pct(row.variance_pct), row.adverse_months, row.is_off_track,
+                ]
+            )
+    written.append(trend_path)
 
     for filename, rows, label in (
         ("branch_variance.csv", analysis.by_branch, "branch"),

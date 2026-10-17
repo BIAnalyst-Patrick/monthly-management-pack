@@ -1,0 +1,121 @@
+branch,sku,product,category,owner,units_budget,units_actual,gp_budget,gp_actual,variance,price,cost_rate,volume_revenue,volume_cost
+Nakuru,HC-08,Fabric Softener 1L,Home Care,Commercial / Pricing,61,60,8553.42,4602.60,-3950.82,-2742.60,-1068.00,-462.22,322.00
+Nakuru,HC-07,Scouring Powder 500g,Home Care,Commercial / Pricing,56,55,7185.36,3657.50,-3527.86,-2428.80,-970.75,-422.94,294.63
+Mombasa Road,HC-08,Fabric Softener 1L,Home Care,Branch Sales,76,60,10656.72,7228.80,-3427.92,104.40,-1288.80,-7395.52,5152.00
+Mombasa Road,HC-07,Scouring Powder 500g,Home Care,Branch Sales,70,56,8981.70,5930.40,-3051.30,-92.96,-1162.00,-5921.16,4124.82
+Nakuru,HC-10,Air Freshener 300ml,Home Care,Commercial / Pricing,34,34,5578.04,2754.00,-2824.04,-1963.84,-860.20,0.00,0.00
+Nakuru,HC-06,Toilet Cleaner 750ml,Home Care,Commercial / Pricing,52,52,6052.28,3319.68,-2732.60,-1807.00,-925.60,0.00,0.00
+Nairobi CBD,HC-08,Fabric Softener 1L,Home Care,Procurement,98,98,13741.56,11088.70,-2652.86,-79.38,-2573.48,0.00,0.00
+Mombasa Road,HC-06,Toilet Cleaner 750ml,Home Care,Branch Sales,65,53,7565.35,5002.14,-2563.21,-5.30,-1161.23,-4603.80,3207.12
+Nakuru,HC-05,Laundry Bar 800g,Home Care,Commercial / Pricing,47,47,4909.62,2560.09,-2349.53,-1578.26,-771.27,0.00,0.00
+Mombasa Road,HC-10,Air Freshener 300ml,Home Care,Branch Sales,43,34,7054.58,4794.68,-2259.90,110.16,-893.52,-4867.20,3390.66
+Nakuru,HC-09,Glass Cleaner 500ml,Home Care,Commercial / Pricing,30,31,4564.50,2544.79,-2019.71,-1526.75,-645.11,501.51,-349.36
+Mombasa Road,HC-05,Laundry Bar 800g,Home Care,Branch Sales,59,47,6163.14,4175.01,-1988.13,26.32,-760.93,-4132.20,2878.68
+Nairobi CBD,HC-07,Scouring Powder 500g,Home Care,Procurement,90,90,11547.90,9686.70,-1861.20,-134.10,-1727.10,0.00,0.00
+Nakuru,HC-04,Floor Cleaner 2L,Home Care,Commercial / Pricing,43,43,3979.22,2227.83,-1751.39,-1219.48,-531.91,0.00,0.00
+Mombasa Road,HC-09,Glass Cleaner 500ml,Home Care,Branch Sales,37,30,5629.55,4014.60,-1614.95,80.70,-630.60,-3510.57,2445.52
+Nairobi CBD,ST-07,Beans 1kg,Staples,Branch Sales,90,125,3509.10,5103.75,1594.65,-46.25,276.25,8857.10,-7492.45
+Mombasa Road,HC-04,Floor Cleaner 2L,Home Care,Branch Sales,53,42,4904.62,3384.78,-1519.84,-12.60,-489.30,-3355.66,2337.72
+Nakuru,HC-03,Bleach 1L,Home Care,Commercial / Pricing,38,38,3063.94,1565.60,-1498.34,-1010.04,-488.30,0.00,0.00
+Nairobi CBD,HC-06,Toilet Cleaner 750ml,Home Care,Procurement,83,83,9660.37,8232.77,-1427.60,166.83,-1594.43,0.00,0.00
+Nairobi CBD,ST-08,Lentils 1kg,Staples,Branch Sales,98,139,4222.82,5575.29,1352.47,-55.60,-358.62,11465.65,-9698.96
+Nairobi CBD,HC-10,Air Freshener 300ml,Home Care,Procurement,55,55,9023.30,7691.75,-1331.55,-60.50,-1271.05,0.00,0.00
+Nairobi CBD,HC-05,Laundry Bar 800g,Home Care,Procurement,76,75,7938.96,6636.75,-1302.21,-51.00,-1146.75,-344.35,239.89
+Mombasa Road,HC-03,Bleach 1L,Home Care,Branch Sales,48,38,3870.24,2577.16,-1293.08,-21.66,-465.12,-2657.80,1851.50
+Nakuru,SN-08,Sweets 200g,Snacks,Commercial / Pricing,61,62,4180.94,3008.24,-1172.70,-1199.08,-42.16,205.69,-137.15
+Nakuru,BV-08,Iced Tea 500ml,Beverages,Commercial / Pricing,61,62,2618.12,1466.30,-1151.82,-1179.24,-15.50,191.82,-148.90
+Nakuru,ST-07,Beans 1kg,Staples,Commercial / Pricing,56,76,2183.44,1038.92,-1144.52,-1966.88,42.56,5061.20,-4281.40
+Nairobi CBD,ST-10,Porridge Mix 1kg,Staples,Branch Sales,55,76,2820.40,3936.80,1116.40,-67.64,107.16,6988.80,-5911.92
+Nakuru,HC-02,Dish Soap 500ml,Home Care,Commercial / Pricing,33,33,2267.10,1175.79,-1091.31,-732.93,-358.38,0.00,0.00
+Nakuru,ST-08,Lentils 1kg,Staples,Commercial / Pricing,61,84,2628.49,1554.84,-1073.65,-2376.36,311.64,6431.95,-5440.88
+Mombasa Road,SN-08,Sweets 200g,Snacks,Branch Sales,76,61,5209.04,4168.74,-1040.30,-37.82,25.62,-3085.35,2057.25
+Nakuru,SN-07,Popcorn 150g,Snacks,Commercial / Pricing,56,56,3428.88,2422.00,-1006.88,-1005.76,-1.12,0.00,0.00
+Nakuru,BV-07,Cordial 750ml,Beverages,Commercial / Pricing,56,56,2172.24,1205.12,-967.12,-950.88,-16.24,0.00,0.00
+Nairobi CBD,ST-09,Pasta 500g,Staples,Branch Sales,48,67,2265.12,3208.63,943.51,34.84,12.06,5818.18,-4921.57
+Nairobi CBD,HC-04,Floor Cleaner 2L,Home Care,Procurement,69,70,6385.26,5444.60,-940.66,-98.70,-934.50,305.06,-212.52
+Nakuru,SN-10,Nuts Mix 300g,Snacks,Commercial / Pricing,34,34,2827.78,1920.32,-907.46,-876.86,-30.60,0.00,0.00
+Mombasa Road,HC-02,Dish Soap 500ml,Home Care,Branch Sales,42,34,2885.40,1981.52,-903.88,-35.02,-319.26,-1811.92,1262.32
+Nairobi CBD,HC-09,Glass Cleaner 500ml,Home Care,Procurement,48,48,7303.20,6424.32,-878.88,-58.56,-820.32,0.00,0.00
+Nakuru,ST-10,Porridge Mix 1kg,Staples,Commercial / Pricing,34,47,1743.52,875.61,-867.91,-1498.36,-36.19,4326.40,-3659.76
+Mombasa Road,SN-07,Popcorn 150g,Snacks,Branch Sales,70,56,4286.10,3433.36,-852.74,-5.60,10.08,-2572.36,1715.14
+Nairobi CBD,ST-05,Wheat Flour 2kg,Staples,Branch Sales,76,104,2340.80,3184.48,843.68,-20.80,2.08,5597.48,-4735.08
+Nakuru,ST-06,Salt 1kg,Staples,Commercial / Pricing,52,73,1814.80,986.23,-828.57,-1554.90,-6.57,4756.29,-4023.39
+Nairobi CBD,ST-06,Salt 1kg,Staples,Branch Sales,83,114,2896.70,3719.82,823.12,-174.42,-84.36,7021.19,-5939.29
+Nakuru,BV-06,Coffee 200g,Beverages,Commercial / Pricing,52,52,1802.32,983.32,-819.00,-791.44,-27.56,0.00,0.00
+Nakuru,SN-06,Cereal Bar 40g,Snacks,Commercial / Pricing,52,51,2802.80,1998.18,-804.62,-775.20,24.48,-161.78,107.88
+Nakuru,ST-09,Pasta 500g,Staples,Commercial / Pricing,30,42,1415.70,656.46,-759.24,-1282.68,-42.84,3674.64,-3108.36
+Mombasa Road,SN-06,Cereal Bar 40g,Snacks,Branch Sales,65,51,3503.50,2746.86,-756.64,40.29,-42.33,-2264.92,1510.32
+Nakuru,BV-10,Coconut Water 330ml,Beverages,Commercial / Pricing,34,35,1740.46,994.00,-746.46,-816.20,18.55,228.80,-177.61
+Mombasa Road,SN-10,Nuts Mix 300g,Snacks,Branch Sales,43,34,3576.31,2855.32,-720.99,9.52,18.02,-2246.40,1497.87
+Nakuru,HC-01,Washing Powder 1kg,Home Care,Commercial / Pricing,29,29,1646.91,933.22,-713.69,-508.08,-205.61,0.00,0.00
+Nakuru,ST-05,Wheat Flour 2kg,Staples,Commercial / Pricing,47,64,1447.60,744.32,-703.28,-1270.40,43.52,3398.47,-2874.87
+Nakuru,SN-09,Wafer 180g,Snacks,Commercial / Pricing,30,30,2275.80,1576.20,-699.60,-687.90,-11.70,0.00,0.00
+Nairobi CBD,ST-04,Sugar 2kg,Staples,Branch Sales,69,97,1842.99,2526.85,683.86,-103.79,39.77,4853.52,-4105.64
+Mombasa Road,HC-01,Washing Powder 1kg,Home Care,Branch Sales,36,29,2044.44,1361.26,-683.18,0.29,-285.94,-1310.40,912.87
+Nakuru,BV-09,Malted Drink 300ml,Beverages,Commercial / Pricing,30,30,1411.80,744.60,-667.20,-627.90,-39.30,0.00,0.00
+Nakuru,BV-05,Tea Leaves 250g,Beverages,Commercial / Pricing,47,47,1433.50,807.46,-626.04,-631.68,5.64,0.00,0.00
+Mombasa Road,BV-08,Iced Tea 500ml,Beverages,Branch Sales,76,61,3261.92,2651.06,-610.86,18.30,14.64,-2877.30,2233.50
+Nairobi CBD,HC-03,Bleach 1L,Home Care,Procurement,61,61,4918.43,4325.51,-592.92,61.61,-654.53,0.00,0.00
+Nakuru,SN-05,Cake 400g,Snacks,Commercial / Pricing,47,47,2190.20,1602.23,-587.97,-619.93,31.96,0.00,0.00
+Nairobi CBD,HC-02,Dish Soap 500ml,Home Care,Procurement,54,53,3709.80,3131.77,-578.03,-2.65,-506.68,-226.49,157.79
+Mombasa Road,BV-07,Cordial 750ml,Beverages,Branch Sales,70,57,2715.30,2167.71,-547.59,-15.96,-27.36,-2253.42,1749.15
+Mombasa Road,SN-05,Cake 400g,Snacks,Branch Sales,59,47,2749.40,2220.28,-529.12,-9.87,39.95,-1677.84,1118.64
+Nakuru,ST-04,Sugar 2kg,Staples,Commercial / Pricing,43,59,1148.53,620.09,-528.44,-987.66,31.86,2773.44,-2346.08
+Nakuru,BV-04,Energy Drink 330ml,Beverages,Commercial / Pricing,43,43,1133.91,611.89,-522.02,-488.91,-33.11,0.00,0.00
+Nakuru,SN-04,Peanuts 250g,Snacks,Commercial / Pricing,43,43,1688.61,1168.31,-520.30,-506.54,-13.76,0.00,0.00
+Mombasa Road,SN-09,Wafer 180g,Snacks,Branch Sales,37,30,2806.82,2290.20,-516.62,7.50,6.90,-1593.55,1062.53
+Mombasa Road,BV-06,Coffee 200g,Beverages,Branch Sales,65,51,2252.90,1758.99,-493.91,-20.91,12.24,-2167.90,1682.66
+Nairobi CBD,ST-02,Rice 5kg,Staples,Branch Sales,54,74,999.54,1474.08,474.54,25.90,78.44,2403.60,-2033.40
+Mombasa Road,BV-10,Coconut Water 330ml,Beverages,Branch Sales,43,34,2201.17,1733.32,-467.85,11.90,-19.04,-2059.20,1598.49
+Nairobi CBD,HC-01,Washing Powder 1kg,Home Care,Procurement,47,47,2669.13,2227.33,-441.80,-18.33,-423.47,0.00,0.00
+Mombasa Road,SN-04,Peanuts 250g,Snacks,Branch Sales,53,41,2081.31,1648.20,-433.11,-12.71,50.84,-1414.32,943.08
+Nakuru,BV-03,Juice 1L,Beverages,Commercial / Pricing,38,37,844.74,435.12,-409.62,-375.55,-11.84,-99.38,77.15
+Nakuru,ST-03,Cooking Oil 2L,Staples,Commercial / Pricing,38,52,859.18,459.16,-400.02,-772.20,55.64,2054.50,-1737.96
+Nairobi CBD,ST-03,Cooking Oil 2L,Staples,Branch Sales,61,85,1379.21,1748.45,369.24,-154.70,-18.70,3522.00,-2979.36
+Nakuru,SN-03,Chocolate Bar 90g,Snacks,Commercial / Pricing,38,38,1214.48,847.40,-367.08,-359.10,-7.98,0.00,0.00
+Mombasa Road,BV-09,Malted Drink 300ml,Beverages,Branch Sales,37,29,1741.22,1379.53,-361.69,-5.22,20.01,-1682.48,1306.00
+Mombasa Road,SN-03,Chocolate Bar 90g,Snacks,Branch Sales,48,38,1534.08,1212.20,-321.88,26.98,-29.26,-959.10,639.50
+Mombasa Road,ST-07,Beans 1kg,Staples,Branch Sales,70,76,2729.30,3045.32,316.02,91.96,-9.88,1518.36,-1284.42
+Nakuru,ST-02,Rice 5kg,Staples,Commercial / Pricing,33,46,610.83,297.16,-313.67,-540.96,-13.34,1562.34,-1321.71
+Nakuru,BV-02,Soda 500ml,Beverages,Commercial / Pricing,33,33,597.30,305.25,-292.05,-274.23,-17.82,0.00,0.00
+Mombasa Road,BV-04,Energy Drink 330ml,Beverages,Branch Sales,53,43,1397.61,1121.44,-276.17,-23.65,11.18,-1178.60,914.90
+Mombasa Road,BV-05,Tea Leaves 250g,Beverages,Branch Sales,59,47,1799.50,1528.91,-270.59,39.01,56.40,-1636.20,1270.20
+Nairobi CBD,ST-01,Maize Flour 2kg,Staples,Branch Sales,47,65,677.74,943.15,265.41,10.40,-4.55,1684.80,-1425.24
+Nakuru,SN-02,Crisps 100g,Snacks,Commercial / Pricing,33,33,813.12,572.88,-240.24,-248.82,8.58,0.00,0.00
+Nakuru,ST-01,Maize Flour 2kg,Staples,Commercial / Pricing,29,40,418.18,191.20,-226.98,-376.80,-8.80,1029.60,-870.98
+Mombasa Road,SN-02,Crisps 100g,Snacks,Branch Sales,42,33,1034.88,825.33,-209.55,22.11,-9.90,-665.55,443.79
+Nairobi CBD,SN-10,Nuts Mix 300g,Snacks,Branch Sales,55,56,4574.35,4779.04,204.69,56.00,65.52,249.60,-166.43
+Mombasa Road,ST-09,Pasta 500g,Staples,Branch Sales,37,41,1746.03,1946.68,200.65,-36.90,48.79,1224.88,-1036.12
+Mombasa Road,BV-03,Juice 1L,Beverages,Branch Sales,48,39,1067.04,885.30,-181.74,25.35,-7.02,-894.42,694.35
+Nakuru,BV-01,Bottled Water 1L,Beverages,Commercial / Pricing,29,29,404.84,223.30,-181.54,-180.96,-0.58,0.00,0.00
+Nairobi CBD,SN-09,Wafer 180g,Snacks,Branch Sales,48,47,3641.28,3465.78,-175.50,-65.80,-33.84,-227.65,151.79
+Nairobi CBD,SN-08,Sweets 200g,Snacks,Branch Sales,98,96,6716.92,6541.44,-175.48,-50.88,12.48,-411.38,274.30
+Nairobi CBD,BV-07,Cordial 750ml,Beverages,Commercial / Pricing,90,89,3491.10,3319.70,-171.40,-74.76,-57.85,-173.34,134.55
+Mombasa Road,ST-05,Wheat Flour 2kg,Staples,Branch Sales,59,63,1817.20,1957.41,140.21,52.92,-35.91,799.64,-676.44
+Nakuru,SN-01,Biscuits 200g,Snacks,Commercial / Pricing,29,30,502.57,363.90,-138.67,-159.90,3.90,52.00,-34.67
+Mombasa Road,ST-10,Porridge Mix 1kg,Staples,Branch Sales,43,48,2205.04,2338.08,133.04,-76.32,-47.04,1664.00,-1407.60
+Mombasa Road,SN-01,Biscuits 200g,Snacks,Branch Sales,36,28,623.88,492.24,-131.64,2.24,4.76,-416.00,277.36
+Mombasa Road,ST-04,Sugar 2kg,Staples,Branch Sales,53,58,1415.63,1533.52,117.89,24.94,-40.60,866.70,-733.15
+Mombasa Road,ST-08,Lentils 1kg,Staples,Branch Sales,76,82,3274.84,3391.52,116.68,-78.72,-63.14,1677.90,-1419.36
+Mombasa Road,BV-02,Soda 500ml,Beverages,Branch Sales,42,34,760.20,644.64,-115.56,8.50,20.74,-647.12,502.32
+Nairobi CBD,BV-05,Tea Leaves 250g,Beverages,Branch Sales,76,74,2318.00,2208.90,-109.10,-8.14,-39.96,-272.70,211.70
+Nairobi CBD,BV-08,Iced Tea 500ml,Beverages,Commercial / Pricing,98,99,4206.16,4099.59,-106.57,-93.06,-56.43,191.82,-148.90
+Nairobi CBD,BV-10,Coconut Water 330ml,Beverages,Commercial / Pricing,55,55,2815.45,2917.75,102.30,69.30,33.00,0.00,0.00
+Mombasa Road,BV-01,Bottled Water 1L,Beverages,Branch Sales,36,29,502.56,403.68,-98.88,-7.25,6.09,-436.80,339.08
+Nairobi CBD,SN-05,Cake 400g,Snacks,Commercial / Pricing,76,75,3541.60,3459.00,-82.60,-65.25,29.25,-139.82,93.22
+Nairobi CBD,SN-07,Popcorn 150g,Snacks,Procurement,90,90,5510.70,5457.60,-53.10,-13.50,-39.60,0.00,0.00
+Mombasa Road,ST-01,Maize Flour 2kg,Staples,Branch Sales,36,40,519.12,570.00,50.88,0.40,-7.20,374.40,-316.72
+Nairobi CBD,BV-06,Coffee 200g,Beverages,Commercial / Pricing,83,83,2876.78,2826.15,-50.63,-39.01,-11.62,0.00,0.00
+Mombasa Road,ST-03,Cooking Oil 2L,Staples,Branch Sales,48,54,1085.28,1131.84,46.56,-75.60,-13.50,880.50,-744.84
+Mombasa Road,ST-06,Salt 1kg,Staples,Branch Sales,65,72,2268.50,2306.88,38.38,-42.48,-163.44,1585.43,-1341.13
+Mombasa Road,ST-02,Rice 5kg,Staples,Branch Sales,42,46,777.42,814.66,37.24,-15.18,-21.62,480.72,-406.68
+Nairobi CBD,SN-06,Cereal Bar 40g,Snacks,Procurement,83,83,4473.70,4442.99,-30.71,27.39,-58.10,0.00,0.00
+Nairobi CBD,BV-02,Soda 500ml,Beverages,Branch Sales,54,55,977.40,1004.30,26.90,9.90,-1.10,80.89,-62.79
+Nairobi CBD,BV-09,Malted Drink 300ml,Beverages,Procurement,48,47,2258.88,2232.50,-26.38,-31.02,51.70,-210.31,163.25
+Nairobi CBD,SN-01,Biscuits 200g,Snacks,Commercial / Pricing,47,47,814.51,792.89,-21.62,-18.33,-3.29,0.00,0.00
+Nairobi CBD,BV-01,Bottled Water 1L,Beverages,Procurement,47,47,656.12,639.20,-16.92,-1.88,-15.04,0.00,0.00
+Nairobi CBD,SN-04,Peanuts 250g,Snacks,Branch Sales,69,70,2709.63,2695.00,-14.63,-27.30,-26.60,117.86,-78.59
+Nairobi CBD,BV-03,Juice 1L,Beverages,Commercial / Pricing,61,60,1356.03,1368.00,11.97,29.40,4.80,-99.38,77.15
+Nairobi CBD,BV-04,Energy Drink 330ml,Beverages,Procurement,69,70,1819.53,1828.40,8.87,9.10,-26.60,117.86,-91.49
+Nairobi CBD,SN-02,Crisps 100g,Snacks,Commercial / Pricing,54,54,1330.56,1324.62,-5.94,-13.50,7.56,0.00,0.00
+Nairobi CBD,SN-03,Chocolate Bar 90g,Snacks,Commercial / Pricing,61,61,1949.56,1949.56,0.00,13.42,-13.42,0.00,0.00

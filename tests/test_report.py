@@ -83,6 +83,25 @@ class AnswerKeyTest(ReportFixture):
             self.analysis.gross_profit_variance,
         )
 
+    def test_key_publishes_every_line_with_an_owner(self):
+        lines = self.key["lines"]
+        self.assertEqual(len(lines), 120)
+        for row in lines:
+            self.assertTrue(row["owner"])
+            self.assertEqual(
+                Decimal(row["price"])
+                + Decimal(row["cost_rate"])
+                + Decimal(row["volume_revenue"])
+                + Decimal(row["volume_cost"]),
+                Decimal(row["variance"]),
+            )
+
+    def test_key_publishes_the_branch_trends(self):
+        trends = {row["branch"]: row for row in self.key["branch_trends"]}
+        self.assertEqual(len(trends), 3)
+        self.assertTrue(trends["Mombasa Road"]["off_track"])
+        self.assertFalse(trends["Nairobi CBD"]["off_track"])
+
 
 class PackMarkdownTest(ReportFixture):
     def setUp(self):
@@ -106,6 +125,12 @@ class PackMarkdownTest(ReportFixture):
     def test_pack_states_that_the_data_is_synthetic(self):
         self.assertIn("synthetic", self.text.lower())
 
+    def test_pack_lists_the_worst_lines_with_their_owners(self):
+        worst = self.key["lines"][0]
+        self.assertIn(worst["product"], self.text)
+        self.assertIn(worst["owner"], self.text)
+        self.assertIn("by line", self.text.lower())
+
     def test_pack_reports_the_reconciliation_identity(self):
         self.assertIn("reconcil", self.text.lower())
 
@@ -113,8 +138,10 @@ class PackMarkdownTest(ReportFixture):
 class TablesTest(ReportFixture):
     def test_tables_are_written_as_csv_with_headers(self):
         with tempfile.TemporaryDirectory() as tmp:
-            paths = report.write_tables(self.analysis, Path(tmp))
-            self.assertEqual(len(paths), 4)
+            paths = report.write_tables(self.ledger, self.analysis, Path(tmp))
+            self.assertEqual(len(paths), 6)
+            names = {p.name for p in paths}
+            self.assertIn("line_variance.csv", names)
             for path in paths:
                 with path.open(newline="") as handle:
                     rows = list(csv.reader(handle))

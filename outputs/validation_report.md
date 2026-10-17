@@ -1,6 +1,6 @@
 # Validation report
 
-**15/15 checks pass.** Each check compares a published figure against an identity it was not derived from.
+**17/17 checks pass, covering sixteen distinct identities.** The full bridge identity is the sum of its two halves, so it corroborates them rather than counting as a separate property. Each check compares a published figure against an identity it was not derived from.
 
 | Check | Outcome | Detail |
 |---|---|---|
@@ -17,5 +17,7 @@
 | mix is zero when every product scales together | pass | mix 0.00, volume 4,000.00 on a doubling of every product |
 | branch variances sum to actual gross profit | pass | 305,338.59 against 305,338.59 |
 | category variances sum to actual gross profit | pass | 305,338.59 against 305,338.59 |
-| owner totals sum to the total variance | pass | -73,405.91 against -73,405.91 |
+| exception list is sorted by impact | pass | 4 exceptions, largest 41,382.41 |
+| unit-cost drift sums to the bridge cost | pass | -26,053.41 across 120 lines, bridge -26,053.41 |
+| line variances sum to the bridge total | pass | -73,405.91 across 120 lines, bridge -73,405.91 |
 | answer key matches recomputed bridge | pass | key total -73,405.91, recomputed -73,405.91 |

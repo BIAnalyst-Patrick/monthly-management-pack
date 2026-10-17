@@ -19,6 +19,8 @@ EXPECTED = (
     "outputs/tables/exceptions.csv",
     "outputs/tables/branch_variance.csv",
     "outputs/tables/category_variance.csv",
+    "outputs/tables/line_variance.csv",
+    "outputs/tables/branch_trend.csv",
     "outputs/charts/01_bridge_waterfall.png",
     "outputs/charts/02_gross_profit_trend.png",
     "outputs/charts/03_variance_by_owner.png",
@@ -51,12 +53,12 @@ class PipelineTest(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertEqual(len(first), len(EXPECTED))
 
-    def test_validation_report_states_fifteen_of_fifteen(self):
+    def test_validation_report_states_seventeen_of_seventeen(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             summary = pipeline.run(month=MONTH, root=root)
             text = (root / "outputs/validation_report.md").read_text()
-        self.assertIn("15/15", text)
+        self.assertIn("17/17", text)
         self.assertTrue(summary["all_passed"])
 
     def test_unknown_month_is_rejected(self):

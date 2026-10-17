@@ -37,7 +37,7 @@ def run(month: str = DEFAULT_MONTH, root: Path | None = None) -> dict:
         validation.render_report(checks), encoding="utf-8"
     )
 
-    report.write_tables(analysis, outputs / "tables")
+    report.write_tables(ledger, analysis, outputs / "tables")
 
     charts.bridge_waterfall(analysis, outputs / "charts" / "01_bridge_waterfall.png")
     charts.gross_profit_trend(

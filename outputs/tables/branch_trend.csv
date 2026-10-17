@@ -1,0 +1,4 @@
+branch,window,units_budget,units_actual,volume_effect,variance_pct,adverse_months,off_track
+Nairobi CBD,2026-04 2026-05 2026-06,8452,9202,43482.69,8.87,0,False
+Nakuru,2026-04 2026-05 2026-06,5240,5713,27428.50,9.03,0,False
+Mombasa Road,2026-04 2026-05 2026-06,6576,5862,-41382.41,-10.86,3,True

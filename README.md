@@ -25,7 +25,7 @@ This pack answers that.
 | **Who owns it** | Commercial / Pricing **-41,943.76**, Procurement **-26,053.41**, Category Management **-14,164.16**, Branch Sales **+8,755.42**. |
 | **The twist** | Volume is *favourable*. The business sold slightly more units than it budgeted and still lost a fifth of its gross profit — so "we need more sales" is the wrong instruction this month. |
 | **Data** | **Synthetic**: 18 months × 3 branches × 40 SKUs, generated from a seeded, documented mechanism — ledger fingerprint `f8b8fa811c7ef11b`. |
-| **Checks** | **15/15** published in [`outputs/validation_report.md`](outputs/validation_report.md); the bridge reconciles to the cent. |
+| **Checks** | **17/17** published in [`outputs/validation_report.md`](outputs/validation_report.md) — seventeen checks over sixteen distinct identities; the bridge reconciles to the cent. |
 
 ## Why a flexed budget, not a subtraction
 
@@ -65,7 +65,7 @@ Materiality is KES 10,000 of gross-profit impact for the month.
 |---|---|---:|---|---|
 | Nakuru | Prices realised 9.87% below the budgeted price for the volume sold | -40,901.06 | Commercial / Pricing | Reissue the price file and cap discount authority at 7% |
 | Home Care | Unit costs 6.56% above budget on the volume bought | -25,934.14 | Procurement | Renegotiate supply terms or reprice the range |
-| Mombasa Road | Units 12.76% below budget at the budgeted margin per unit | -15,656.28 | Branch Sales | Rebuild the branch trading plan against the volume gap |
+| Mombasa Road | Units below budget in 3 of the last 3 months, 10.86% down on a rolling basis | -41,382.41 | Branch Sales | Rebuild the trading plan against the trend gap |
 | Product mix | Staples moved from 25.00% of budgeted units to 31.56% | -14,164.16 | Category Management | Review ranging and promo depth against the budgeted blend |
 
 The full pack — headline, bridge, exceptions, branch and category splits, and the
@@ -82,6 +82,40 @@ three actions for Monday — is generated at [`outputs/MONTHLY_PACK.md`](outputs
 One branch discounting and one branch under-trading account for almost the whole
 shortfall; the largest branch is within 3% of plan. That is a management answer,
 not a chart.
+
+The branch rule reads **units over a trailing three-month window**, not one
+month's shortfall: Mombasa Road has been below budget in all three of the last
+three months, which is a branch drifting rather than a bad month. Nairobi and
+Nakuru are *above* plan on units — their misses are price and cost, and the rule
+would be wrong to call them a trading problem.
+
+## Where it sits, by line
+
+All 120 product lines are decomposed the same way, and every one carries an
+owner — the department that can move the largest part of that line. The five
+worst:
+
+| Branch | Product | Variance | Price | Unit cost | Volume revenue | Volume cost | Owner |
+|---|---|---:|---:|---:|---:|---:|---|
+| Nakuru | Fabric Softener 1L | -3,950.82 | -2,742.60 | -1,068.00 | -462.22 | 322.00 | Commercial / Pricing |
+| Nakuru | Scouring Powder 500g | -3,527.86 | -2,428.80 | -970.75 | -422.94 | 294.63 | Commercial / Pricing |
+| Mombasa Road | Fabric Softener 1L | -3,427.92 | 104.40 | -1,288.80 | -7,395.52 | 5,152.00 | Branch Sales |
+| Mombasa Road | Scouring Powder 500g | -3,051.30 | -92.96 | -1,162.00 | -5,921.16 | 4,124.82 | Branch Sales |
+| Nakuru | Air Freshener 300ml | -2,824.04 | -1,963.84 | -860.20 | 0.00 | 0.00 | Commercial / Pricing |
+
+Every line is published in [`outputs/tables/line_variance.csv`](outputs/tables/line_variance.csv)
+and in the answer key, so a manager can filter to their own branch or category.
+
+The two columns that matter for diagnosis are **price** and **unit cost**: both
+are valued at the volume actually sold, which is what separates a line that
+charged too little from one that bought too dear, independent of how much moved.
+The volume charge is split into its revenue and cost halves at budget rates, so
+the four columns add to the line's variance exactly. 25 of the 120 lines finished
+above budget — the shortfall is concentrated, not spread.
+
+Owner split by line: Commercial / Pricing 49, Branch Sales 56, Procurement 15.
+No line is owned by Category Management, which is correct: mix is a portfolio
+effect and cannot be attributed to a single product line.
 
 ## What this project demonstrates
 
@@ -140,12 +174,13 @@ pack/
   generator.py   the seeded budget and the actuals that drift from it
   variance.py    flexed budget, bridge, attribution, exceptions
   report.py      answer key, monthly pack, CSV tables, CLI
-  validation.py  the fifteen checks
+  validation.py  the seventeen checks
   charts.py      three committed PNGs
   pipeline.py    one run from ledger to artefacts
 data/ledger.json          every budget and actual line, 18 months
 outputs/MONTHLY_PACK.md   the pack itself
-outputs/answer_key.json   every number quoted above
+outputs/answer_key.json   every number quoted above, including all 120 lines
+outputs/tables/           bridge, exceptions, branch, category, line and trend CSVs
 outputs/validation_report.md
 tests/                    the suite, including the README drift guard
 ```
@@ -154,6 +189,6 @@ tests/                    the suite, including the README drift guard
 
 Seed `20260101`, fingerprint `f8b8fa811c7ef11b`. Regenerate with `make run` and
 the fingerprint should be identical; if it is not, the ledger you are reading is
-not the ledger this README describes. The 15 checks in
+not the ledger this README describes. The 17 checks in
 [`outputs/validation_report.md`](outputs/validation_report.md) include a
 fingerprint guard, so a hand-edited line is caught rather than accommodated.

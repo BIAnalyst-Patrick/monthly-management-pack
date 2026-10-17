@@ -37,7 +37,7 @@ Ledger fingerprint `f8b8fa811c7ef11b` (seed 20260101). Synthetic data, disclosed
 
 ## Exceptions
 
+- **Mombasa Road (3 months)** (volume, KES -41,382.41) — Units below budget in 3 of the last 3 months, 10.86% down on a rolling basis: this is a branch drifting, not one bad month, and the unit gap is worth KES 41,382.41 of gross profit at budget margins. *Owner: Branch Sales.*
 - **Nakuru** (price, KES -40,901.06) — Prices realised 9.87% below the budgeted price for the volume actually sold, costing KES 40,901.06 of gross profit on KES 379,260.56 of budgeted branch revenue. *Owner: Commercial / Pricing.*
 - **Home Care** (cost, KES -25,934.14) — Unit costs on Home Care are running 6.56% above budget on the volume bought, costing KES 25,934.14 of gross profit. *Owner: Procurement.*
-- **Mombasa Road** (volume, KES -15,656.28) — Units sold ran 12.76% below budget, which at the budgeted gross profit per unit is KES 15,656.28 of gross profit. *Owner: Branch Sales.*
 - **Product mix** (mix, KES -14,164.16) — The blend moved towards lower-margin lines: Staples went from 25.00% of budgeted units to 31.56% actual, costing KES 14,164.16 of gross profit at budget margins. *Owner: Category Management.*

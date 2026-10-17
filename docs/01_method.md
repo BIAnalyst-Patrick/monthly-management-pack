@@ -82,6 +82,59 @@ Two identities stop a plausible-looking wrong decomposition from passing:
 Both are asserted in `tests/test_variance.py` and re-checked independently in
 `outputs/validation_report.md`.
 
+## Line-level decomposition
+
+Every product line is decomposed the same way, so a branch manager or a buyer can
+be handed their own rows rather than the portfolio total. For line `i`:
+
+```
+Price          = Va_i · (Pa_i - Pb_i)
+Cost rate      = Va_i · (Cb_i - Ca_i)
+Volume revenue = (Va_i - Vb_i) · Pb_i
+Volume cost    = -(Va_i - Vb_i) · Cb_i
+```
+
+These sum to the line's variance exactly:
+
+```
+Va·Pa - Va·Ca - Vb·Pb + Vb·Cb = GP_a(i) - GP_b(i)
+```
+
+**Why this splits cost from volume the way the brief asked.** Price and cost rate
+are valued at the volume *actually sold*, so a line that paid 6% more per unit
+shows that drift even if it sold exactly to plan; a line that sold more shows it
+in the two volume halves, valued at *budget* price and cost. The two effects can
+no longer be confused for one another.
+
+Aggregating the rows reproduces the portfolio bridge:
+
+- `Σ Price` equals the bridge's price component
+- `Σ Cost rate` equals the bridge's cost component
+- `Σ (Volume revenue + Volume cost)` equals volume **plus** mix, because the blend
+effect only exists once lines are combined
+
+Those three identities are published as checks, so the line table and the bridge
+cannot drift apart.
+
+## Ownership of a line
+
+Each line is assigned to the department that can move the largest part of it:
+price to Commercial / Pricing, unit cost to Procurement, the volume halves to
+Branch Sales. Ties break in that order, so a flat or ambiguous line is still
+assigned deterministically. Mix is deliberately absent — it is a portfolio
+effect and cannot belong to a single product line.
+
+## The branch trend rule
+
+A branch is reported as off track only when it is behind in **at least two of the
+last three months** and its unit gap over that window is at least **5% of the
+window's budget gross profit**. The rule reads *units*, not gross profit: a branch
+discounting its way to a profit miss has a pricing problem, and reporting it as a
+trading problem would send the wrong owner after it. That is why Nakuru — 43%
+below budget on gross profit — produces a price exception and no volume one,
+while Mombasa Road, whose units have decayed for three months, produces the volume
+exception.
+
 ## Attribution
 
 | Component | Owner | Because |

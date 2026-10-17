@@ -29,9 +29,9 @@ Lines at or beyond the materiality threshold of KES 10,000.00.
 
 | Line | Finding | Driver | Impact (KES) | Owner | Action |
 |---|---|---|---:|---|---|
+| Mombasa Road (3 months) | Units below budget in 3 of the last 3 months, 10.86% down on a rolling basis: this is a branch drifting, not one bad month, and the unit gap is worth KES 41,382.41 of gross profit at budget margins. | volume | -41,382.41 | Branch Sales | Rebuild the Mombasa Road trading plan against the trend gap |
 | Nakuru | Prices realised 9.87% below the budgeted price for the volume actually sold, costing KES 40,901.06 of gross profit on KES 379,260.56 of budgeted branch revenue. | price | -40,901.06 | Commercial / Pricing | Reissue the Nakuru price file and cap discount authority at 7% |
 | Home Care | Unit costs on Home Care are running 6.56% above budget on the volume bought, costing KES 25,934.14 of gross profit. | cost | -25,934.14 | Procurement | Renegotiate Home Care supply terms or reprice the range |
-| Mombasa Road | Units sold ran 12.76% below budget, which at the budgeted gross profit per unit is KES 15,656.28 of gross profit. | volume | -15,656.28 | Branch Sales | Rebuild the Mombasa Road trading plan against the volume gap |
 | Product mix | The blend moved towards lower-margin lines: Staples went from 25.00% of budgeted units to 31.56% actual, costing KES 14,164.16 of gross profit at budget margins. | mix | -14,164.16 | Category Management | Review Staples ranging, promo depth and shelf allocation against the budgeted blend |
 
 ## Where it sits
@@ -53,11 +53,21 @@ Lines at or beyond the materiality threshold of KES 10,000.00.
 | Snacks | 84,593.31 | 72,280.31 | -12,313.00 | -14.56% |
 | Staples | 55,063.05 | 57,881.20 | 2,818.15 | 5.12% |
 
+### By line — the five worst
+
+| Branch | Product | Variance | Price | Unit cost | Volume | Owner |
+|---|---|---:|---:|---:|---:|---|
+| Nakuru | Fabric Softener 1L | -3,950.82 | -2,742.60 | -1,068.00 | -140.22 | Commercial / Pricing |
+| Nakuru | Scouring Powder 500g | -3,527.86 | -2,428.80 | -970.75 | -128.31 | Commercial / Pricing |
+| Mombasa Road | Fabric Softener 1L | -3,427.92 | 104.40 | -1,288.80 | -2,243.52 | Branch Sales |
+| Mombasa Road | Scouring Powder 500g | -3,051.30 | -92.96 | -1,162.00 | -1,796.34 | Branch Sales |
+| Nakuru | Air Freshener 300ml | -2,824.04 | -1,963.84 | -860.20 | 0.00 | Commercial / Pricing |
+
 ## What I would do first
 
-1. **Commercial / Pricing** — Reissue the Nakuru price file and cap discount authority at 7%. Worth KES 40,901.06 of gross profit, review date the last working day of next month.
-2. **Procurement** — Renegotiate Home Care supply terms or reprice the range. Worth KES 25,934.14 of gross profit, review date the last working day of next month.
-3. **Branch Sales** — Rebuild the Mombasa Road trading plan against the volume gap. Worth KES 15,656.28 of gross profit, review date the last working day of next month.
+1. **Branch Sales** — Rebuild the Mombasa Road trading plan against the trend gap. Worth KES 41,382.41 of gross profit, review date the last working day of next month.
+2. **Commercial / Pricing** — Reissue the Nakuru price file and cap discount authority at 7%. Worth KES 40,901.06 of gross profit, review date the last working day of next month.
+3. **Procurement** — Renegotiate Home Care supply terms or reprice the range. Worth KES 25,934.14 of gross profit, review date the last working day of next month.
 
 ## Method and limits
 

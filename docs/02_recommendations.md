@@ -37,9 +37,14 @@ increase that restores the budgeted margin.
 
 ## 3. Branch Sales — Mombasa Road: rebuild the trading plan
 
-**Finding.** Units ran **12.76% below** budget, worth **KES 15,656.28** at the
-budgeted margin per unit. This is the one place where volume, not price, is the
-problem — and the branch has been losing ground since August 2025.
+**Finding.** Below budget on units in **all three of the last three months**,
+**10.86% down** on a rolling basis, worth **KES 41,382.41** at budget margins over
+the window. This is the one place where volume, not price, is the problem — and
+the branch has been losing ground since August 2025.
+
+The trailing window matters here. A single month below budget is noise; three in
+a row is a branch that has stopped trading to plan, and it is the difference
+between asking a manager what happened and asking them for a new plan.
 
 **Do this.** Rebuild the branch plan from its actual customer base rather than the
 original assumption, and decide within the month whether the gap is coverage

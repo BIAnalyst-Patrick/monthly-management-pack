@@ -41,8 +41,13 @@ class ReadmeDriftTest(unittest.TestCase):
         self.assertIn(self.key["fingerprint"], self.readme)
 
     def test_readme_states_the_validation_and_exception_counts(self):
-        self.assertIn("15/15", self.readme)
+        self.assertIn("17/17", self.readme)
         self.assertIn(f"{len(self.key['exceptions'])} exceptions", self.readme)
+
+    def test_readme_quotes_the_line_table_it_publishes(self):
+        self.assertIn("line_variance.csv", self.readme)
+        for row in self.key["lines"][:5]:
+            self.assertIn(f"{Decimal(row['variance']):,.2f}", self.readme)
 
     def test_readme_declares_the_data_synthetic_before_the_fold(self):
         head = "\n".join(self.readme.splitlines()[:40]).lower()
@@ -65,15 +70,17 @@ class ReadmeDriftTest(unittest.TestCase):
 
         collect(self.key)
         key_values = published
-        quoted = {
-            token.replace(",", "")
-            for token in self.readme.replace("KES ", " ").split()
-            if token.replace(",", "").replace(".", "").isdigit() and "." in token
-        }
+        quoted = set()
+        for token in self.readme.replace("KES ", " ").split():
+            # Normalise the typographic minus so negative figures are guarded too.
+            cleaned = token.replace("\u2212", "-").replace(",", "")
+            bare = cleaned.lstrip("-")
+            if bare.replace(".", "").isdigit() and "." in bare:
+                quoted.add(cleaned)
         unknown = {
             token for token in quoted
             if token not in {v.replace(",", "") for v in key_values}
-            and Decimal(token) > Decimal("1000")
+            and abs(Decimal(token)) > Decimal("1000")
         }
         self.assertEqual(unknown, set(), f"README figures not in the answer key: {unknown}")
 

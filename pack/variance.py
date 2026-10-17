@@ -32,7 +32,10 @@ DEFAULT_MATERIALITY = Decimal("10000")
 
 PRICE_EROSION_THRESHOLD = Decimal("0.975")
 COST_STEP_THRESHOLD = Decimal("1.025")
-VOLUME_MISS_THRESHOLD = Decimal("0.95")
+
+TREND_WINDOW = 3
+TREND_ADVERSE_MONTHS = 2
+TREND_VARIANCE_THRESHOLD = Decimal("0.05")
 
 
 def _money(value) -> Decimal:
@@ -79,6 +82,82 @@ class GroupVariance:
         if self.budget_gross_profit == 0:
             return Decimal("0")
         return (self.variance / self.budget_gross_profit * 100).quantize(CENT)
+
+
+@dataclass(frozen=True)
+class LineVariance:
+    """One product in one branch for one month, decomposed exactly.
+
+    ``price`` and ``cost_rate`` are valued at **actual** volume, which is what
+    isolates unit-cost drift from the volume change; ``volume_revenue`` and
+    ``volume_cost`` are the volume change valued at budget rates. The four sum
+    to ``variance`` to the cent.
+    """
+
+    branch: str
+    sku: str
+    product: str
+    category: str
+    owner: str
+    units_budget: int
+    units_actual: int
+    gp_budget: Decimal
+    gp_actual: Decimal
+    price: Decimal
+    cost_rate: Decimal
+    volume_revenue: Decimal
+    volume_cost: Decimal
+
+    @property
+    def variance(self) -> Decimal:
+        return self.gp_actual - self.gp_budget
+
+    @property
+    def volume(self) -> Decimal:
+        return self.volume_revenue + self.volume_cost
+
+
+@dataclass(frozen=True)
+class BranchTrend:
+    """A branch's units against budget over a trailing window.
+
+    Volume is the branch's own lever, so the rule reads units rather than gross
+    profit: a branch discounting its way to a profit miss is a pricing problem
+    and must not be reported as a trading one.
+    """
+
+    branch: str
+    window: tuple[str, ...]
+    units_budget: int
+    units_actual: int
+    budget_gp: Decimal
+    actual_gp: Decimal
+    adverse_months: int
+
+    @property
+    def volume_effect(self) -> Decimal:
+        """The unit gap over the window, valued at the budget margin per unit."""
+        if not self.units_budget:
+            return Decimal("0.00")
+        return _money(
+            Decimal(self.units_actual - self.units_budget)
+            * (self.budget_gp / Decimal(self.units_budget))
+        )
+
+    @property
+    def variance_pct(self) -> Decimal:
+        if self.budget_gp == 0:
+            return Decimal("0")
+        return (self.volume_effect / self.budget_gp * 100).quantize(CENT)
+
+    @property
+    def is_off_track(self) -> bool:
+        """Persistently behind on units, rather than one bad month."""
+        return (
+            self.adverse_months >= TREND_ADVERSE_MONTHS
+            and self.budget_gp > 0
+            and -self.variance_pct / 100 >= TREND_VARIANCE_THRESHOLD
+        )
 
 
 @dataclass(frozen=True)
@@ -215,6 +294,92 @@ def by_category(ledger: Ledger, month: str) -> tuple[GroupVariance, ...]:
     return _group(ledger, month, lambda branch, sku, ledger: ledger.category_of(sku))
 
 
+def _owning_department(price, cost_rate, volume) -> str:
+    """The department that can move the largest part of this line.
+
+    Ties break price, then cost, then volume, so the assignment is stable for
+    flat lines and for lines where two effects happen to be equal.
+    """
+    ranked = (("price", price), ("cost", cost_rate), ("volume", volume))
+    best = max(range(len(ranked)), key=lambda i: (abs(ranked[i][1]), -i))
+    return OWNER_OF_COMPONENT[ranked[best][0]]
+
+
+def line_variances(ledger: Ledger, month: str) -> tuple[LineVariance, ...]:
+    """Every product line, decomposed so the four parts sum to its variance."""
+    budget, actual, keys = _paired(ledger, month)
+    rows = []
+    for key in keys:
+        b, a = budget[key], actual[key]
+        volume_change = Decimal(a.volume - b.volume)
+        price = _money(a.volume * (a.price - b.price))
+        cost_rate = _money(a.volume * (b.unit_cost - a.unit_cost))
+        volume_revenue = _money(volume_change * b.price)
+        volume_cost = _money(-volume_change * b.unit_cost)
+        item = ledger.catalogue[a.sku]
+        rows.append(
+            LineVariance(
+                branch=a.branch,
+                sku=a.sku,
+                product=item.name,
+                category=item.category,
+                owner=_owning_department(price, cost_rate, volume_revenue + volume_cost),
+                units_budget=b.volume,
+                units_actual=a.volume,
+                gp_budget=_money(b.gross_profit),
+                gp_actual=_money(a.gross_profit),
+                price=price,
+                cost_rate=cost_rate,
+                volume_revenue=volume_revenue,
+                volume_cost=volume_cost,
+            )
+        )
+    rows.sort(key=lambda row: (-abs(row.variance), row.branch, row.sku))
+    return tuple(rows)
+
+
+def branch_trends(
+    ledger: Ledger, month: str, window: int = TREND_WINDOW
+) -> tuple[BranchTrend, ...]:
+    """Trailing-window gross profit per branch, ending at ``month``."""
+    if month not in ledger.months:
+        raise KeyError(f"{month} is not in this ledger")
+    end = ledger.months.index(month)
+    months = ledger.months[max(0, end - window + 1): end + 1]
+
+    trends = []
+    for branch in ledger.branches:
+        budget_gp = Decimal(0)
+        actual_gp = Decimal(0)
+        units_budget = 0
+        units_actual = 0
+        adverse = 0
+        for covered in months:
+            month_ledger = ledger.month(covered)
+            month_budget = [l for l in month_ledger.budgets if l.branch == branch]
+            month_actual = [l for l in month_ledger.actuals if l.branch == branch]
+            b_units = sum(l.volume for l in month_budget)
+            a_units = sum(l.volume for l in month_actual)
+            budget_gp += sum((l.gross_profit for l in month_budget), Decimal(0))
+            actual_gp += sum((l.gross_profit for l in month_actual), Decimal(0))
+            units_budget += b_units
+            units_actual += a_units
+            if a_units < b_units:
+                adverse += 1
+        trends.append(
+            BranchTrend(
+                branch=branch,
+                window=months,
+                units_budget=units_budget,
+                units_actual=units_actual,
+                budget_gp=_money(budget_gp),
+                actual_gp=_money(actual_gp),
+                adverse_months=adverse,
+            )
+        )
+    return tuple(trends)
+
+
 def _exceptions(ledger: Ledger, month: str, materiality: Decimal):
     month_ledger = ledger.month(month)
     budget = {(l.branch, l.sku): l for l in month_ledger.budgets}
@@ -232,9 +397,6 @@ def _exceptions(ledger: Ledger, month: str, materiality: Decimal):
             (actual[k].volume * budget[k].price for k in branch_keys), Decimal(0)
         )
         revenue_budget = sum((budget[k].revenue for k in branch_keys), Decimal(0))
-        gp_budget = sum((budget[k].gross_profit for k in branch_keys), Decimal(0))
-        units_actual = sum(actual[k].volume for k in branch_keys)
-        units_budget = sum(budget[k].volume for k in branch_keys)
 
         if budget_value and actual_value / budget_value < PRICE_EROSION_THRESHOLD:
             impact = actual_value - budget_value
@@ -256,27 +418,27 @@ def _exceptions(ledger: Ledger, month: str, materiality: Decimal):
                 )
             )
 
-        if units_budget and Decimal(units_actual) / Decimal(units_budget) < VOLUME_MISS_THRESHOLD:
-            gp_per_unit = gp_budget / Decimal(units_budget)
-            impact = (Decimal(units_actual) - Decimal(units_budget)) * gp_per_unit
-            shortfall = (
-                (Decimal(units_actual) / Decimal(units_budget) - 1) * 100
-            ).quantize(CENT)
-            found.append(
-                ExceptionLine(
-                    scope="branch",
-                    label=branch,
-                    driver="volume",
-                    gross_profit_impact=_money(impact),
-                    owner=OWNER_OF_COMPONENT["volume"],
-                    action=f"Rebuild the {branch} trading plan against the volume gap",
-                    finding=(
-                        f"Units sold ran {abs(shortfall)}% below budget, which at the "
-                        f"budgeted gross profit per unit is {_format_money(-impact)} "
-                        f"of gross profit."
-                    ),
-                )
+    for trend in branch_trends(ledger, month):
+        if not trend.is_off_track:
+            continue
+        span = f"{len(trend.window)} months"
+        found.append(
+            ExceptionLine(
+                scope="branch",
+                label=f"{trend.branch} ({span})",
+                driver="volume",
+                gross_profit_impact=_money(trend.volume_effect),
+                owner=OWNER_OF_COMPONENT["volume"],
+                action=f"Rebuild the {trend.branch} trading plan against the trend gap",
+                finding=(
+                    f"Units below budget in {trend.adverse_months} of the last "
+                    f"{span}, {abs(trend.variance_pct)}% down on a rolling basis: this "
+                    f"is a branch drifting, not one bad month, and the unit gap is "
+                    f"worth {_format_money(trend.volume_effect)} of gross profit at "
+                    f"budget margins."
+                ),
             )
+        )
 
     for category in CATEGORIES:
         category_keys = [k for k in keys if ledger.category_of(k[1]) == category]

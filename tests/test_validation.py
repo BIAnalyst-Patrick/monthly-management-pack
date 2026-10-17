@@ -22,9 +22,18 @@ class ValidationFixture(unittest.TestCase):
 
 
 class CheckSuiteTest(ValidationFixture):
-    def test_fifteen_checks_are_published(self):
+    def test_seventeen_checks_are_published(self):
         checks = validation.run_checks(self.ledger, self.analysis, self.key)
-        self.assertEqual(len(checks), 15)
+        self.assertEqual(len(checks), 17)
+
+    def test_the_two_checks_the_plan_named_are_present(self):
+        names = {c.name for c in validation.run_checks(self.ledger, self.analysis, self.key)}
+        self.assertIn("exception list is sorted by impact", names)
+        self.assertIn("unit-cost drift sums to the bridge cost", names)
+
+    def test_the_line_table_is_reconciled_to_the_bridge(self):
+        names = {c.name for c in validation.run_checks(self.ledger, self.analysis, self.key)}
+        self.assertIn("line variances sum to the bridge total", names)
 
     def test_every_check_passes_on_an_honest_answer_key(self):
         checks = validation.run_checks(self.ledger, self.analysis, self.key)
@@ -72,7 +81,13 @@ class ValidationReportMarkdownTest(ValidationFixture):
         text = validation.render_report(checks)
         for check in checks:
             self.assertIn(check.name, text)
-        self.assertIn("15/15", text)
+        self.assertIn("17/17", text)
+
+    def test_report_counts_identities_rather_than_claiming_independence(self):
+        checks = validation.run_checks(self.ledger, self.analysis, self.key)
+        text = validation.render_report(checks)
+        self.assertIn("distinct identities", text)
+        self.assertNotIn("independent checks", text)
 
 
 if __name__ == "__main__":

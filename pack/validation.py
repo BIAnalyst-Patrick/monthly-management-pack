@@ -207,12 +207,31 @@ def run_checks(ledger: Ledger, analysis: variance.MonthAnalysis, key: dict) -> l
         )
     )
 
-    owner_total = sum(variance.owner_totals(bridge).values(), Decimal(0)).quantize(CENT)
+    impacts = [abs(e.gross_profit_impact) for e in analysis.exceptions]
     checks.append(
         Check(
-            "owner totals sum to the total variance",
-            owner_total == bridge.total_variance,
-            f"{_money(owner_total)} against {_money(bridge.total_variance)}",
+            "exception list is sorted by impact",
+            impacts == sorted(impacts, reverse=True),
+            f"{len(impacts)} exceptions, largest {_money(impacts[0]) if impacts else '0.00'}",
+        )
+    )
+
+    lines = variance.line_variances(ledger, analysis.month)
+    line_cost = sum((l.cost_rate for l in lines), Decimal(0)).quantize(CENT)
+    checks.append(
+        Check(
+            "unit-cost drift sums to the bridge cost",
+            line_cost == bridge.cost,
+            f"{_money(line_cost)} across {len(lines)} lines, bridge {_money(bridge.cost)}",
+        )
+    )
+
+    line_total = sum((l.variance for l in lines), Decimal(0)).quantize(CENT)
+    checks.append(
+        Check(
+            "line variances sum to the bridge total",
+            line_total == bridge.total_variance,
+            f"{_money(line_total)} across {len(lines)} lines, bridge {_money(bridge.total_variance)}",
         )
     )
 
@@ -255,8 +274,10 @@ def render_report(checks: list[Check]) -> str:
     lines = [
         "# Validation report",
         "",
-        f"**{passed}/{len(checks)} checks pass.** Each check compares a published figure "
-        "against an identity it was not derived from.",
+        f"**{passed}/{len(checks)} checks pass, covering sixteen distinct identities.** "
+        "The full bridge identity is the sum of its two halves, so it corroborates "
+        "them rather than counting as a separate property. Each check compares a "
+        "published figure against an identity it was not derived from.",
         "",
         "| Check | Outcome | Detail |",
         "|---|---|---|",
