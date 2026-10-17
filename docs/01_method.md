@@ -113,8 +113,9 @@ Aggregating the rows reproduces the portfolio bridge:
 - `Σ (Volume revenue + Volume cost)` equals volume **plus** mix, because the blend
 effect only exists once lines are combined
 
-Those three identities are published as checks, so the line table and the bridge
-cannot drift apart.
+Two of those identities are published as validation checks — the cost-drift sum
+and the line total — and all three are asserted in `tests/test_lines.py`, so the
+line table and the bridge cannot drift apart.
 
 ## Ownership of a line
 
