@@ -151,6 +151,15 @@ ignores, so following this README cannot overwrite the committed artefacts in
 only thing that regenerates it. Pass `--out DIR` to choose another scratch
 directory.
 
+The suite also renders a second month, December 2025, and compares it byte for
+byte against the golden files in `tests/fixtures/2025-12/`. That month carries
+one exception where June carries four, so the renderers are exercised on a shape
+they were not written against. After a deliberate rendering change:
+
+```bash
+make fixture   # rewrites tests/fixtures/2025-12/ for review in the diff
+```
+
 No installation. The analysis is standard library only; the charts need Pillow,
 and the committed PNGs mean a reader never has to install it.
 
@@ -199,6 +208,7 @@ outputs/answer_key.json   every number quoted above, including all 120 lines
 outputs/tables/           bridge, exceptions, branch, category, line and trend CSVs
 outputs/validation_report.md
 tests/                    the suite, including the README drift guard
+tests/fixtures/2025-12/   golden pack for a month the renderers were not written for
 ```
 
 ## Data

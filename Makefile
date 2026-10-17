@@ -1,4 +1,4 @@
-.PHONY: run test month clean
+.PHONY: run test month fixture clean
 
 run:
 	python3 scripts/run_all.py
@@ -8,6 +8,9 @@ test:
 
 month:
 	python3 -m pack.report --month $(if $(MONTH),$(MONTH),2026-06)
+
+fixture:
+	python3 scripts/make_fixture.py --month $(if $(MONTH),$(MONTH),2025-12)
 
 clean:
 	rm -rf outputs/charts/*.png outputs/tables/*.csv outputs/answer_key.* \
