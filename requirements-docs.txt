@@ -1,0 +1,7 @@
+# Optional extras for scripts/build_docs.py (PDF and slide deck).
+# Install into a project-local folder:
+#   python3 -m pip install --target .venv-site -r requirements-docs.txt
+# Then run: PYTHONPATH=.venv-site python3 scripts/build_docs.py
+python-pptx>=1.0.2
+reportlab>=4.0
+pypdf>=5.0

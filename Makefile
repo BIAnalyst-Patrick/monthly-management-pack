@@ -1,4 +1,7 @@
-.PHONY: run test month fixture clean
+.PHONY: run test month fixture docs clean
+
+PYTHON ?= python3
+DOCS_SITE ?= .venv-site
 
 run:
 	python3 scripts/run_all.py
@@ -11,6 +14,9 @@ month:
 
 fixture:
 	python3 scripts/make_fixture.py --month $(if $(MONTH),$(MONTH),2025-12)
+
+docs:
+	PYTHONPATH=$(DOCS_SITE) $(PYTHON) scripts/build_docs.py
 
 clean:
 	rm -rf outputs/charts/*.png outputs/tables/*.csv outputs/answer_key.* \

@@ -27,6 +27,41 @@ This pack answers that.
 | **Data** | **Synthetic**: 18 months × 3 branches × 40 SKUs, generated from a seeded, documented mechanism — ledger fingerprint `f8b8fa811c7ef11b`. |
 | **Checks** | **17/17** published in [`outputs/validation_report.md`](outputs/validation_report.md) — seventeen checks over sixteen distinct identities; the bridge reconciles to the cent. |
 
+## What it looks like
+
+![Gross profit bridge](outputs/charts/01_bridge_waterfall.png)
+
+*Budget to actual in four labelled steps: each bar carries its value and its share
+of the **KES 73,405.91** gap, the two colours mean favourable and unfavourable,
+and the axis starts at 301K rather than zero so a 73K movement is visible instead
+of flattened against a million-shilling level.*
+
+![Who owns the variance](outputs/charts/03_variance_by_owner.png)
+
+*Each department's contribution to the gap, with its share. Ownership is
+arithmetic: the department that can move the largest component of a line owns the
+line, so an owner can argue with the numbers but not with the method.*
+
+![Gross profit against budget](outputs/charts/02_gross_profit_trend.png)
+
+*Eighteen months of actual against the phased budget, with the current month's gap
+bracketed and labelled. Every one of the last six months is below plan — which is
+why the branch rule reads a trend, not a single month.*
+
+## The deliverables
+
+| Output | File | What it is for |
+|---|---|---|
+| **Report** | [`docs/report-2026-06.md`](docs/report-2026-06.md) | the narrative with tables and charts inline |
+| **PDF** | [`docs/monthly-pack-2026-06.pdf`](docs/monthly-pack-2026-06.pdf) | what goes into the management meeting: headline, bridge, owners, lines, actions |
+| **Slides** | [`docs/monthly-pack-2026-06.pptx`](docs/monthly-pack-2026-06.pptx) | eight slides telling the same story in reading order |
+| **Brief** | [`docs/how-a-management-pack-is-produced.md`](docs/how-a-management-pack-is-produced.md) | how this runs month to month in a real trading business |
+
+All four are generated from the same answer key, so a figure cannot disagree
+between them, and rebuilding is reproducible: `make docs`. The PDF and the deck
+need two optional packages, installed once with
+`python3 -m pip install --target .venv-site -r requirements-docs.txt`.
+
 ## Why a flexed budget, not a subtraction
 
 A budget is built on planned volume. Comparing it with actual spend at actual
@@ -201,8 +236,10 @@ pack/
   charts.py      three committed PNGs
   money.py       one formatter per output shape (cents, plain, grouped, kes, pct)
   pipeline.py    one run from ledger to artefacts
+docs/                     the report, the method brief, the PDF and the deck
 data/ledger.json          every budget and actual line, 18 months
 scratch/                  ignored: output of single-month CLI runs
+requirements-docs.txt     optional extras for `make docs` (PDF and slides)
 outputs/MONTHLY_PACK.md   the pack itself
 outputs/answer_key.json   every number quoted above, including all 120 lines
 outputs/tables/           bridge, exceptions, branch, category, line and trend CSVs
