@@ -85,5 +85,56 @@ class ReadmeDriftTest(unittest.TestCase):
         self.assertEqual(unknown, set(), f"README figures not in the answer key: {unknown}")
 
 
+class ActionPlanTest(unittest.TestCase):
+    """The Monday action plan is what a manager acts on, so it is guarded where
+    it sits: in the first screen, after the charts, with an owner from the
+    answer key on every action.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.ledger = Ledger.from_dict(generator.build_ledger())
+        cls.key = key.build_answer_key(cls.ledger, MONTH)
+        cls.readme = (ROOT / "README.md").read_text(encoding="utf-8")
+
+    def section(self):
+        _, found, rest = self.readme.partition("## What happens Monday")
+        self.assertTrue(found, "README has no 'What happens Monday' action plan")
+        return rest.split("\n## ", 1)[0]
+
+    def table(self):
+        rows = [
+            line for line in self.section().splitlines()
+            if line.strip().startswith("|")
+        ]
+        return [[cell.strip() for cell in row.strip("|").split("|")] for row in rows]
+
+    def test_the_action_plan_sits_in_the_first_screen_after_the_charts(self):
+        self.assertIn("## What happens Monday", self.readme)
+        self.assertLess(
+            self.readme.index("## What it looks like"),
+            self.readme.index("## What happens Monday"),
+            "the action plan must come after the charts",
+        )
+        self.assertLess(
+            self.readme.index("## What happens Monday"),
+            self.readme.index("## The deliverables"),
+            "the action plan must come before the deliverables",
+        )
+
+    def test_every_action_in_the_plan_carries_an_owner_from_the_answer_key(self):
+        table = self.table()
+        self.assertTrue(table, "the action plan needs a table of actions")
+        self.assertIn("Owner", table[0], "the action plan table needs an Owner column")
+        owner = table[0].index("Owner")
+        actions = table[2:]  # header and separator rows
+        self.assertEqual(len(actions), 3, "the plan is three actions")
+        for row in actions:
+            self.assertIn(
+                row[owner], self.key["owners"],
+                f"action without an owner from the answer key: {row}",
+            )
+
+
 if __name__ == "__main__":
     unittest.main()

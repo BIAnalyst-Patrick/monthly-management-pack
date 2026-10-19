@@ -48,6 +48,23 @@ line, so an owner can argue with the numbers but not with the method.*
 bracketed and labelled. Every one of the last six months is below plan — which is
 why the branch rule reads a trend, not a single month.*
 
+## What happens Monday
+
+Three actions for Monday, each with the owner who can move it and the money at
+stake this month — the same figures the answer key publishes, not a new estimate.
+
+| # | Action | Owner | Targets (KES) | Review |
+|--:|---|---|---:|---|
+| 1 | Reissue the Nakuru price file and cap discount authority at 7% | Commercial / Pricing | price **-41,943.76** | last working day of next month |
+| 2 | Renegotiate Home Care supply terms or reprice the range | Procurement | cost **-26,053.41** | last working day of next month |
+| 3 | Rebuild the Mombasa Road trading plan against the trend gap | Branch Sales | trend gap **-41,382.41** | last working day of next month |
+
+The first two are the whole price and cost components those owners control — the
+money the **Who owns it** line attributes to them above. The third is the branch
+trend gap the trailing-window rule flags in *Where it sits*. Mix (-14,164.16) is
+deliberately absent: a ranging review is not a Monday action, and it stays with
+Category Management in the exceptions table below.
+
 ## The deliverables
 
 | Output | File | What it is for |
